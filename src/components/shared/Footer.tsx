@@ -10,7 +10,7 @@ const Footer = () => {
         width={113}
         height={46.11}
       />
-      <span className="flex items-center text-blue-gray-25 text-xs">
+      <span className="flex items-center space-x-4 text-blue-gray-25 text-xs">
         <span>Powered by</span>
         <Image
           src="/svgs/hedera.svg"

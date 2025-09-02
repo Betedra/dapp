@@ -41,7 +41,7 @@ const PrimaryButton = ({
           href={href}
           target={target}
           className={cn(
-            "bg-blue-500 border border-blue-100 px-5 py-3 text-center text-sm lg:text-base block font-semibold max-w-full rounded-[0.625rem] text-blue-900 style-shadow hover:shadow-none transition-shadow duration-75",
+            "bg-blue-500 border border-blue-100 px-5 py-3 text-center text-sm lg:text-base block font-semibold max-w-full rounded-[0.625rem] text-blue-900 styled-shadow",
             className
           )}
         >
@@ -50,7 +50,7 @@ const PrimaryButton = ({
       ) : as === "span" ? (
         <span
           className={cn(
-            "bg-blue-500 border border-blue-100 px-5 block text-center py-3 text-sm lg:text-base font-semibold max-w-full rounded-[0.625rem] text-blue-900 style-shadow hover:shadow-none transition-shadow duration-75",
+            "bg-blue-500 border border-blue-100 px-5 block text-center py-3 text-sm lg:text-base font-semibold max-w-full rounded-[0.625rem] text-blue-900 styled-shadow",
             className
           )}
         >
@@ -60,7 +60,7 @@ const PrimaryButton = ({
         <button
           {...props}
           className={cn(
-            "bg-blue-500 border border-blue-100 px-5 py-3 font-semibold text-sm lg:text-base max-w-full rounded-[0.625rem] text-blue-900 style-shadow hover:shadow-none transition-shadow duration-75",
+            "bg-blue-500 border disabled:opacity-50 border-blue-100 px-5 py-3 font-semibold text-sm lg:text-base max-w-full rounded-[0.625rem] text-blue-900 styled-shadow",
             className
           )}
         >
