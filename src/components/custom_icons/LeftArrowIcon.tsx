@@ -12,7 +12,7 @@ const LeftArrowIcon = ({ className }: { className?: string }) => {
     >
       <path
         d="M7.1775 4.44751L2.625 9.00001L7.1775 13.5525"
-        stroke="#E6E6E6"
+        stroke="#1D2939"
         strokeWidth="1.5"
         strokeMiterlimit="10"
         strokeLinecap="round"
@@ -21,7 +21,7 @@ const LeftArrowIcon = ({ className }: { className?: string }) => {
       <path
         opacity="0.4"
         d="M15.3749 9H2.75244"
-        stroke="#E6E6E6"
+        stroke="#1D2939"
         strokeWidth="1.5"
         strokeMiterlimit="10"
         strokeLinecap="round"

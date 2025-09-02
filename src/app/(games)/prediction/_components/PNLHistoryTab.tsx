@@ -127,8 +127,8 @@ const PNLHistoryTab = ({ bets, currentEpoch }: PnlTabProps) => {
     : "~$0.00";
 
   return (
-    <div className="space-y-5 py-4 border-t border-tuna">
-      <div className="space-y-3 border-b border-tuna pb-6">
+    <div className="space-y-5 py-4 border-t border-blue-gray-200">
+      <div className="space-y-3 border-b border-blue-gray-200 pb-6">
         <div className="flex items-start justify-between">
           <h3 className="text-sm lg:text-base mb-1 text-gray-50">
             Net results

@@ -27,7 +27,7 @@ const Header = () => {
                   "capitalize text-blue-gray-500 text-sm hover:border-blue-500 border-b-3 border-transparent lg:text-base block pb-4 px-[3.09375rem]",
                   {
                     "text-blue-gray-900 border-blue-500 font-semibold":
-                      pathname === `/${item}`,
+                      pathname.includes(item),
                   }
                 )}
               >

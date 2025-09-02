@@ -19,8 +19,9 @@ function PaginationNumber({
   const className = cn(
     "flex size-[2.5rem] items-center rounded-lg justify-center",
     {
-      "z-10 bg-accent text-white": isActive,
-      "hover:bg-accent hover:text-white": !isActive && position !== "middle",
+      "z-10 bg-blue-500 text-blue-gray-900": isActive,
+      "hover:bg-blue-500 hover:text-blue-gray-900":
+        !isActive && position !== "middle",
     }
   );
 
@@ -60,9 +61,9 @@ const Pagination = ({
   }
 
   return (
-    <div className="text-white flex flex-col lg:flex-row items-center justify-between space-y-3 lg:space-y-0">
+    <div className="text-blue-gray-900 flex flex-col lg:flex-row items-center justify-between space-y-3 lg:space-y-0">
       {hideLabel ? null : (
-        <span className="text-sm">
+        <span className="text-sm text-blue-gray-500">
           Showing {currentPage} of {totalPages} Pages
         </span>
       )}
@@ -75,7 +76,7 @@ const Pagination = ({
           <LeftArrowIcon />
           <span className="hidden lg:inline-block">Prev</span>
         </button>
-        <div className="flex space-x-[0.375rem] text-storm-gray text-sm">
+        <div className="flex space-x-[0.375rem] text-blue-gray-800 text-sm">
           {allPages.map((page, index) => {
             let position: "first" | "last" | "single" | "middle" | undefined;
 

@@ -13,7 +13,7 @@ async function page({
   const currentPage = (await searchParams)?.page;
   const result = await getLeaderboard(Number(currentPage ?? 1));
   return (
-    <div className="pt-6 lg:pt-[2.875rem] px-4 max-w-[77.3125rem] mx-auto space-y-[1.5625rem]">
+    <div className="lg:pt-[4.230625rem] pt-[2.875rem] px-4 max-w-[81.25rem] mx-auto space-y-[1.5625rem]">
       <Header />
       <Leaderboard
         data={

@@ -49,12 +49,16 @@ const StartingSoon = ({
   isOpenRound,
 }: StartingSoonProps) => {
   return (
-    <div className="border flex items-center justify-between mb-2 px-4 py-3 border-tuna rounded-sm">
+    <div className="flex items-center justify-between mb-2 px-4 py-3 rounded-sm">
       <span className="text-xs text-gray-100">
-        Round <span className="font-medium text-gray-50">#{epoch}</span>
+        Round <span className="font-medium text-blue-gray-900">#{epoch}</span>
       </span>
-      <span className="flex items-center text-xs space-x-1.25">
-        {isLiveRound ? <VideoIcon /> : <AiOutlineClockCircle size={16} />}
+      <span className="flex space-x-[0.3125rem] items-center text-xs leading-4 text-blue-gray-900 bg-blue-gray-200 rounded-full px-2 py-0.5">
+        {isLiveRound ? (
+          <VideoIcon />
+        ) : (
+          <span className="block size-[0.375rem] rounded-full bg-purple-500" />
+        )}
         <span>
           {isLiveRound ? <span></span> : isOpenRound ? "Starting soon" : ""}
         </span>
@@ -155,12 +159,14 @@ const Round = ({ bet, currentEpoch }: { bet: Bet; currentEpoch: number }) => {
   return (
     <AccordionItem
       value={`item-${round?.epoch}`}
-      className="border w-full border-tuna rounded-sm px-4 py-3"
+      className="border w-full border-blue-gray-200 rounded-sm px-4 py-3"
     >
       <AccordionTrigger className="py-0 w-full font-normal hover:no-underline">
         <span className="text-xs text-gray-100">
           Round{" "}
-          <span className="font-medium text-gray-50">#{round?.epoch}</span>
+          <span className="font-medium text-blue-gray-900">
+            #{round?.epoch}
+          </span>
         </span>
         <span
           className={cn(
@@ -213,7 +219,7 @@ const Round = ({ bet, currentEpoch }: { bet: Bet; currentEpoch: number }) => {
               betAmount={profit}
             />
             <Share
-              className="border-tuna text-white mr-0"
+              className="border-blue-gray-200 text-white mr-0"
               round={round as any}
               multiplier={multiplier.toString()}
             />
@@ -267,7 +273,7 @@ const Round = ({ bet, currentEpoch }: { bet: Bet; currentEpoch: number }) => {
               >
                 {profit?.toFixed(3)} HBAR
               </span>
-              {/* <span className="text-gray-50 text-xs">-$0.12</span> */}
+              {/* <span className="text-blue-gray-900 text-xs">-$0.12</span> */}
             </span>
           </div>
         </div>
@@ -387,7 +393,7 @@ const RoundsTabs = ({ currentEpoch, maxPages, bets }: TabsProps) => {
         defaultValue="all"
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-3 border-b border-tuna rounded-none bg-transparent p-0 mb-2">
+        <TabsList className="w-fit rounded-none bg-transparent p-0 mb-2">
           {[
             HistoryFilter.ALL,
             HistoryFilter.COLLECTED,
@@ -396,7 +402,7 @@ const RoundsTabs = ({ currentEpoch, maxPages, bets }: TabsProps) => {
             <TabsTrigger
               value={tab}
               key={index}
-              className="capitalize data-[state=active]:bg-transparent data-[state=active]:px-2 data-[state=active]:py-1 data-[state=active]:border-b-3 data-[state=active]:border-primary-400 data-[state=active]:border-t-0 data-[state=active]:border-x-0 data-[state=active]:rounded-none"
+              className="capitalize data-[state=active]:text-blue-800 data-[state=active]:bg-blue-50 px-2 py-1 data-[state=active]:rounded-lg"
             >
               {tab}
             </TabsTrigger>
@@ -406,7 +412,7 @@ const RoundsTabs = ({ currentEpoch, maxPages, bets }: TabsProps) => {
           {hasBetHistory && isConnected ? (
             <Rounds currentEpoch={currentEpoch} bets={results} />
           ) : (
-            <div className="min-h-16 py-8 text-sm text-center text-gray-50 flex flex-col space-y-2 items-center">
+            <div className="min-h-16 py-8 text-sm text-center text-blue-gray-500 flex flex-col space-y-2 items-center">
               <AiOutlineClockCircle size={64} />
               <p>No history yet</p>
             </div>
@@ -416,7 +422,7 @@ const RoundsTabs = ({ currentEpoch, maxPages, bets }: TabsProps) => {
           {hasBetHistory && isConnected ? (
             <Rounds currentEpoch={currentEpoch} bets={results} />
           ) : (
-            <div className="min-h-16 py-8 text-sm text-center text-gray-50 flex flex-col space-y-2 items-center">
+            <div className="min-h-16 py-8 text-sm text-center text-blue-gray-500 flex flex-col space-y-2 items-center">
               <AiOutlineClockCircle size={64} />
               <p>No history yet</p>
             </div>
@@ -426,7 +432,7 @@ const RoundsTabs = ({ currentEpoch, maxPages, bets }: TabsProps) => {
           {hasBetHistory && isConnected ? (
             <Rounds currentEpoch={currentEpoch} bets={results} />
           ) : (
-            <div className="min-h-16 py-8 text-sm text-center text-gray-50 flex flex-col space-y-2 items-center">
+            <div className="min-h-16 py-8 text-sm text-center text-blue-gray-500 flex flex-col space-y-2 items-center">
               <AiOutlineClockCircle size={64} />
               <p>No history yet</p>
             </div>
@@ -457,7 +463,7 @@ const PNL = ({ bets, currentEpoch }: TabsProps) => {
 
   if (!hasBetHistory || !isConnected) {
     return (
-      <div className="min-h-28 py-8 text-sm text-center text-gray-50 flex flex-col space-y-2 items-center">
+      <div className="min-h-28 py-8 text-sm text-center text-blue-gray-500 flex flex-col space-y-2 items-center">
         <AiOutlineClockCircle size={64} />
         <p>No history yet</p>
       </div>
@@ -477,7 +483,7 @@ const History = ({ currentEpoch }: { currentEpoch: number }) => {
       <DialogTrigger asChild>
         <Button
           title="History"
-          className="!bg-transparent !h-auto flex items-center !font-normal hover:border-blue-500 border text-center border-gray-200 !px-4 !py-2.5 rounded-sm gap-3 text-sm lg:text-base text-blue-gray-900"
+          className="!bg-transparent !h-auto flex items-center !font-normal hover:border-blue-500 border text-center border-gray-200 !px-4 !py-2.5 rounded-sm gap-3 !text-base text-blue-gray-900"
         >
           <TimeIcon />
           <span>History</span>
@@ -490,9 +496,19 @@ const History = ({ currentEpoch }: { currentEpoch: number }) => {
           </DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="rounds" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-transparent p-0 mb-2">
-            <TabsTrigger value="rounds">Rounds</TabsTrigger>
-            <TabsTrigger value="pnl">PNL</TabsTrigger>
+          <TabsList className="w-full border-b border-blue-gray-50 justify-start bg-transparent p-0 mb-2">
+            <TabsTrigger
+              value="rounds"
+              className="px-4 py-[0.53125rem] text-blue-gray-400 data-[state=active]:text-blue-gray-900 border-b-2 border-transparent data-[state=active]:border-blue-500"
+            >
+              Rounds
+            </TabsTrigger>
+            <TabsTrigger
+              value="pnl"
+              className="px-4 py-[0.53125rem] text-blue-gray-400 data-[state=active]:text-blue-gray-900 border-b-2 border-transparent data-[state=active]:border-blue-500"
+            >
+              PNL
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="rounds">
             <RoundsTabs

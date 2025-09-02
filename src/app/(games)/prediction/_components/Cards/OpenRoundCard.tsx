@@ -186,7 +186,7 @@ const OpenRoundCard = ({
               </span>
             </div>
           ) : (
-            <span className="flex border rounded-sm text-blue-gray-900 justify-between border-tuna px-2 py-[0.4375rem] opacity-50">
+            <span className="flex border rounded-sm text-blue-gray-900 justify-between border-blue-gray-200 px-2 py-[0.4375rem] opacity-50">
               <span className="flex items-center space-x-1 text-sm">
                 {positionEnteredText ? (
                   <FaArrowDownLong

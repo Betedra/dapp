@@ -36,7 +36,7 @@ const ReusedComponent = ({
 
   return (
     <div>
-      <div className="border border-tuna flex justify-between rounded-sm py-3 px-4 mb-2">
+      <div className="border border-blue-gray-200 flex justify-between rounded-sm py-3 px-4 mb-2">
         <div className="w-full ">
           <span className="flex items-center mb-2 space-x-1">
             <Image src="/svgs/hbar.svg" alt="HBAR" width={26} height={26} />
@@ -91,7 +91,7 @@ const ReusedComponent = ({
           </span>
         </div>
       </div>
-      <div className="border border-tuna rounded-sm py-3 px-4 flex justify-between">
+      <div className="border border-blue-gray-200 rounded-sm py-3 px-4 flex justify-between">
         <span>
           <span className="text-gray-50 block text-[0.625rem] mb-1">
             My referral code
@@ -172,7 +172,7 @@ export function Share({
         <DialogTrigger asChild>
           <button
             className={cn(
-              "bg-transparent border border-gray-50 rounded-md px-3 py-[0.625rem]",
+              "bg-transparent border border-[#B3B3B3] rounded-md px-3 py-[0.625rem]",
               className
             )}
           >

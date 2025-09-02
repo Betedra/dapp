@@ -90,7 +90,7 @@ const Predictions = () => {
   }
 
   return (
-    <div className="pt-[4.230625rem] ">
+    <div className="pt-[4.230625rem]">
       <div className="flex mb-[1.5625rem] flex-col max-w-[81.25rem] border-b border-gray-200 pb-[0.6875rem] mx-auto lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
         <div className="flex flex-col space-y-2 sm:flex-row justify-between sm:space-x-3 items-center">
           <div className="bg-gray-25 relative rounded-[2.5rem] text-blue-gray-900 pl-[3rem] pr-4 py-[0.3125rem] flex items-center w-full max-w-full justify-between sm:w-fit">

@@ -1,4 +1,3 @@
-import TrophyIcon from "@/components/custom_icons/TrophyIcon";
 import PrimaryButton from "@/components/shared/Buttons";
 import {
   Dialog,
@@ -10,6 +9,7 @@ import {
 import PredictionsABI from "@/smart-contract/abi/prediction";
 import { NodeRound } from "@/state/types";
 import { currencyFormatter, formatBigIntToFixedNumber } from "@/utils";
+import Image from "next/image";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { useAccount, useWriteContract } from "wagmi";
@@ -79,33 +79,43 @@ export function ClaimWinning({ round, betAmount, disabled }: Props) {
       <DialogTrigger asChild>
         <PrimaryButton
           disabled={claimed || isSuccess}
-          text={claimed || isSuccess ? "Claimed" : "Claim your winnings"}
-          className="px-0 ring-[#334058] text-sm leading-6 py-[0.375rem]"
+          text={claimed || isSuccess ? "Claimed" : "Claim earning"}
+          className="px-6 ring-[#334058] text-sm leading-6 py-[0.375rem]"
         />
       </DialogTrigger>
-      <DialogContent className="max-w-[21rem] bg-white border border-onyx rounded-[0.625rem] drop-shadow-container backdrop-blur-sm py-8 px-6 text-white">
+      <DialogContent className="sm:max-w-[17.9375rem] bg-white rounded-2xl py-8 px-6 text-mine-shaft">
         <DialogHeader>
           <DialogTitle className="sr-only">Claim Winning</DialogTitle>
         </DialogHeader>
-        <div className="">
-          <h2 className="font-medium text-base lg:text-lg text-center mb-2 lg:leading-8">
+        <div>
+          <h2 className="font-semibold text-base text-center mb-1 lg:leading-8">
             Claim your Winnings
           </h2>
-          <TrophyIcon className="size-[3.5rem] mx-auto mb-6" />
-          <div className="border mb-6 border-tuna rounded-sm px-4 py-[0.4375rem] space-y-1">
-            <span className="flex items-center justify-between">
-              <span className="text-xs text-gray-100">Amount to claim</span>
-              <span className="text-gray-25 text-sm text-right">
-                {amount} HBAR{" "}
-                <span className="text-gray-100 text-xs">
-                  ({currencyFormatter(amount * rate)})
-                </span>
+          <Image
+            src="/svgs/trophy.svg"
+            alt="Trophy"
+            width={89}
+            height={84}
+            className="mx-auto mb-1"
+          />
+          <div className="mb-[1.75rem] flex justify-between">
+            <span className="block w-fit">
+              <span className="text-xs text-blue-gray-500 block mb-1">
+                Round
+              </span>
+              <span className="text-blue-gray-900 text-sm">
+                #{round?.epoch}
               </span>
             </span>
-            <span className="flex items-center justify-between">
-              <span className="text-xs text-gray-100">Round</span>
-              <span className="text-gray-25 text-sm text-right">
-                #{round?.epoch}
+            <span className="block w-fit">
+              <span className="text-xs text-blue-gray-500 block mb-1">
+                Amount to claim
+              </span>
+              <span className="text-blue-gray-900 text-sm">
+                {amount} HBAR{" "}
+                <span className="text-blue-gray-500 text-xs font-medium">
+                  ~{currencyFormatter(amount * rate, 2)}
+                </span>
               </span>
             </span>
           </div>
@@ -115,6 +125,7 @@ export function ClaimWinning({ round, betAmount, disabled }: Props) {
               isPending ? "Claiming..." : isSuccess ? "Claimed" : "Claim now"
             }
             onClick={claimHandler}
+            className="max-h-[2.75rem]"
           />
         </div>
       </DialogContent>

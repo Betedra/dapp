@@ -123,7 +123,7 @@ const Leaderboard = ({
 
   return (
     <div>
-      <div className="overflow-auto hide-scrollbar">
+      <div className="overflow-auto hide-scrollbar mb-8">
         <Table className="border-spacing-y-3 border-separate">
           <TableHeader>
             <TableRow>

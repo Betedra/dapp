@@ -42,7 +42,7 @@ const TransactionModal = ({
             <CheckIcon />
             <h3 className="text-lg font-medium">Transaction Successful</h3>
           </span>
-          <span className="block border text-xs border-tuna px-4 py-[0.4375rem] rounded-sm">
+          <span className="block border text-xs border-blue-gray-200 px-4 py-[0.4375rem] rounded-sm">
             <h6 className="mb-1">{position} Position entered</h6>
             <span className="text-gray-100">Bet Amount: {betAmount}</span>
           </span>

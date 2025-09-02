@@ -60,7 +60,7 @@ const PrimaryButton = ({
         <button
           {...props}
           className={cn(
-            "bg-blue-500 border disabled:opacity-50 border-blue-100 px-5 py-3 font-semibold text-sm lg:text-base max-w-full rounded-[0.625rem] text-blue-900 styled-shadow",
+            "bg-blue-500 border w-full disabled:opacity-50 border-blue-100 px-5 py-3 font-semibold text-sm lg:text-base max-w-full rounded-[0.625rem] text-blue-900 styled-shadow",
             className
           )}
         >

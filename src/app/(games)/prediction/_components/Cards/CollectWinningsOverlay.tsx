@@ -1,8 +1,9 @@
-import TrophyIcon from "@/components/custom_icons/TrophyIcon";
+
 import { NodeLedger, NodeRound } from "@/state/types";
 import { formatEther } from "ethers";
 import ClaimWinning from "../ClaimWinning";
 import Share from "../Share";
+import Image from "next/image";
 
 interface Props {
   disabled?: boolean;
@@ -21,8 +22,8 @@ const CollectWinningsOverlay = ({
 }: Props) => {
   return (
     <>
-      <div className="absolute z-50 bottom-0 left-0 backdrop-blur-[0.6875rem] bg-white/60 rounded-b-[0.625rem] pl-[0.875rem] pr-1 py-[1.375rem] w-full flex items-center justify-between space-x-3">
-        <TrophyIcon className="min-w-[2.125rem]" />
+      <div className="absolute z-50 bottom-0 left-0 backdrop-blur-[0.6875rem] bg-white rounded-b-[0.625rem] pl-[0.875rem] pr-1 py-[1.375rem] w-full flex items-center justify-between space-x-3">
+        <Image src="/svgs/trophy.svg" alt="Trophy" width={33.9} height={32} />
         <ClaimWinning
           disabled={disabled}
           round={round}
