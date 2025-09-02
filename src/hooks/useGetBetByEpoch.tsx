@@ -16,10 +16,12 @@ const useGetBetByEpoch = (account: `0x${string}`, epoch: number) => {
 
   if (!response) return null;
 
+  const data = response as any;
+
   return {
-    position: response[0] as 0 | 1,
-    amount: response[1],
-    claimed: response[2],
+    position: data[0] as 0 | 1,
+    amount: data[1],
+    claimed: data[2],
   };
 };
 

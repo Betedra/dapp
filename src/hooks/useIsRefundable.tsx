@@ -20,7 +20,9 @@ const useIsRefundable = (epoch: number) => {
   });
 
   useEffect(() => {
-    setIsRefundable(data || false);
+    if (typeof data === "boolean") {
+      setIsRefundable(data || false);
+    }
   }, [data]);
 
   return { isRefundable, setIsRefundable };

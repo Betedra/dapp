@@ -111,16 +111,16 @@ const PNLHistoryTab = ({ bets, currentEpoch }: PnlTabProps) => {
   // Guard in case user has only lost rounds
   const hasBestRound = summary.won.bestRound.payout !== 0;
 
-  const netResultInUsd = tokenPrice.multipliedBy(netResultAmount).toNumber();
-  const avgEDUWonInUsd = tokenPrice.multipliedBy(avgEDUWonPerRound).toNumber();
+  const netResultInUsd = tokenPrice.times(netResultAmount).toNumber();
+  const avgEDUWonInUsd = tokenPrice.times(avgEDUWonPerRound).toNumber();
   const avgEDUWonInUsdDisplay = !Number.isNaN(avgEDUWonInUsd)
     ? `~${avgEDUWonInUsd.toFixed(2)}`
     : "~$0.00";
   const betRoundInUsd = tokenPrice
-    .multipliedBy(summary.won.bestRound.payout)
+    .times(summary.won.bestRound.payout)
     .toNumber();
   const avgPositionEnteredInUsd = tokenPrice
-    .multipliedBy(avgPositionEntered)
+    .times(avgPositionEntered)
     .toNumber();
   const avgPositionEnteredInUsdDisplay = !Number.isNaN(avgPositionEnteredInUsd)
     ? `~${avgPositionEnteredInUsd.toFixed(2)}`

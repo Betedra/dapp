@@ -20,7 +20,7 @@ const Predictions = () => {
   const [firstLoad, setFirstLoad] = useState(true);
   const { price } = usePollOraclePrice();
 
-  const { rounds, currentEpoch, loading, refetch, refreshLedger } =
+  const { rounds, currentEpoch, loading, refreshLedger } =
     useGetSortedRoundsCurrentEpoch();
 
   // useEffect(() => {
