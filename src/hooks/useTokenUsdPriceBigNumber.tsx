@@ -17,7 +17,7 @@ const useTokenUsdPriceBigNumber = () => {
     return BigNumber(0);
   }
 
-  const price = Number(formatUnits(data as any, 6));
+  const price = Number(formatUnits(data as any, 8));
 
   return BigNumber(price);
 };

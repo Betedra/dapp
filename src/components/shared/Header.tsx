@@ -10,7 +10,7 @@ import { ConnectWallet } from "./ConnectWallet";
 const Header = () => {
   const pathname = usePathname();
   return (
-    <header className="px-4 lg:px-0 mx-auto max-w-[79.9375rem]">
+    <header className="px-4 xl:px-0 mx-auto max-w-[79.9375rem]">
       <div className="flex items-center justify-between">
         <Image
           src="/svgs/logo.svg"

@@ -90,7 +90,7 @@ const Predictions = () => {
   }
 
   return (
-    <div className="pt-[4.230625rem]">
+    <div className="pt-[4.230625rem] px-4 xl:px-0">
       <div className="flex mb-[1.5625rem] flex-col max-w-[81.25rem] border-b border-gray-200 pb-[0.6875rem] mx-auto lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
         <div className="flex flex-col space-y-2 sm:flex-row justify-between sm:space-x-3 items-center">
           <div className="bg-gray-25 relative rounded-[2.5rem] text-blue-gray-900 pl-[3rem] pr-4 py-[0.3125rem] flex items-center w-full max-w-full justify-between sm:w-fit">
@@ -182,23 +182,25 @@ const Predictions = () => {
         })}
       </Swiper>
 
-      <div className="flex items-center justify-between space-x-4 w-fit pt-[5.75rem] mx-auto">
-        <Button
-          disabled={activeIndex === 0}
-          onClick={() => scrollToSlide(activeIndex - 1)}
-          className="bg-transparent border hover:bg-blue-500 border-blue-gray-200 rounded-md text-blue-gray-800 px-4 py-2.5 min-w-[3.0625rem] !h-auto"
-        >
-          <MdKeyboardArrowLeft size={18} />
-        </Button>
+      {rounds.length > 0 ? (
+        <div className="flex items-center justify-between space-x-4 w-fit pt-[5.75rem] mx-auto">
+          <Button
+            disabled={activeIndex === 0}
+            onClick={() => scrollToSlide(activeIndex - 1)}
+            className="bg-transparent border hover:bg-blue-500 border-blue-gray-200 rounded-md text-blue-gray-800 px-4 py-2.5 min-w-[3.0625rem] !h-auto"
+          >
+            <MdKeyboardArrowLeft size={18} />
+          </Button>
 
-        <Button
-          disabled={activeIndex === rounds?.length - 1}
-          onClick={() => scrollToSlide(activeIndex + 1)}
-          className="bg-transparent border hover:bg-blue-500 border-blue-gray-200 text-blue-gray-800 rounded-md px-4 py-2.5 min-w-[3.0625rem] !h-auto"
-        >
-          <MdKeyboardArrowRight size={18} />
-        </Button>
-      </div>
+          <Button
+            disabled={activeIndex === rounds?.length - 1}
+            onClick={() => scrollToSlide(activeIndex + 1)}
+            className="bg-transparent border hover:bg-blue-500 border-blue-gray-200 text-blue-gray-800 rounded-md px-4 py-2.5 min-w-[3.0625rem] !h-auto"
+          >
+            <MdKeyboardArrowRight size={18} />
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 };
