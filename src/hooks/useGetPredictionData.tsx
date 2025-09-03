@@ -31,7 +31,7 @@ const useGetPredictionData = () => {
     ],
     allowFailure: false,
     query: {
-      // refetchInterval: 300000,
+      refetchInterval: 300000,
       refetchIntervalInBackground: true,
     },
   });

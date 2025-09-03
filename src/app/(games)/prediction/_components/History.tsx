@@ -50,7 +50,7 @@ const StartingSoon = ({
 }: StartingSoonProps) => {
   return (
     <div className="flex items-center justify-between mb-2 px-4 py-3 rounded-sm">
-      <span className="text-xs text-gray-100">
+      <span className="text-xs text-blue-gray-500">
         Round <span className="font-medium text-blue-gray-900">#{epoch}</span>
       </span>
       <span className="flex space-x-[0.3125rem] items-center text-xs leading-4 text-blue-gray-900 bg-blue-gray-200 rounded-full px-2 py-0.5">
@@ -162,7 +162,7 @@ const Round = ({ bet, currentEpoch }: { bet: Bet; currentEpoch: number }) => {
       className="border w-full border-blue-gray-200 rounded-sm px-4 py-3"
     >
       <AccordionTrigger className="py-0 w-full font-normal hover:no-underline">
-        <span className="text-xs text-gray-100">
+        <span className="text-xs text-blue-gray-500">
           Round{" "}
           <span className="font-medium text-blue-gray-900">
             #{round?.epoch}
@@ -213,15 +213,15 @@ const Round = ({ bet, currentEpoch }: { bet: Bet; currentEpoch: number }) => {
         !isRefundable &&
         position !== BetPosition.HOUSE ? (
           <div className="flex items-center justify-between w-full space-x-4 mt-2 mb-4">
-            <ClaimWinning
-              round={round as any}
-              disabled={claimed}
-              betAmount={profit}
-            />
             <Share
               className="border-blue-gray-200 text-white mr-0"
               round={round as any}
               multiplier={multiplier.toString()}
+            />
+            <ClaimWinning
+              round={round as any}
+              disabled={claimed}
+              betAmount={profit}
             />
           </div>
         ) : round && isRefundable ? (
@@ -232,11 +232,11 @@ const Round = ({ bet, currentEpoch }: { bet: Bet; currentEpoch: number }) => {
             className="mb-3 !text-sm"
           />
         ) : null}
-        <div className="bg-white/5 rounded-md p-2 mb-2 space-y-1">
+        <div className="bg-blue-gray-50 rounded-md p-2 mb-2 space-y-1">
           {round?.startAt ? (
             <span className="flex items-center justify-between">
-              <span className="text-gray-100 text-xs">Date</span>
-              <span className="text-right text-xs text-gray-25">
+              <span className="text-blue-gray-500 text-xs">Date</span>
+              <span className="text-right text-xs text-blue-gray-900">
                 {round?.startAt
                   ? new Date(round?.startAt * 1000).toLocaleDateString()
                   : null}
@@ -244,22 +244,22 @@ const Round = ({ bet, currentEpoch }: { bet: Bet; currentEpoch: number }) => {
             </span>
           ) : null}
           <span className="flex items-center justify-between">
-            <span className="text-gray-100 text-xs">Verdict</span>
-            <span className="text-right text-xs capitalize text-gray-25">
+            <span className="text-blue-gray-500 text-xs">Verdict</span>
+            <span className="text-right text-xs capitalize text-blue-gray-900">
               {roundResult === Result.HOUSE
                 ? `${roundResult} Win (You Lose)`
                 : roundResult}
             </span>
           </span>
           <span className="flex items-center justify-between">
-            <span className="text-gray-100 text-xs">Your bet</span>
-            <span className="text-right text-xs text-gray-25">
+            <span className="text-blue-gray-500 text-xs">Your bet</span>
+            <span className="text-right text-xs text-blue-gray-900">
               {amount?.toFixed(2)}
             </span>
           </span>
           <span className="flex items-center justify-between">
-            <span className="text-gray-100 text-xs">Your position</span>
-            <span className="text-right text-xs text-gray-25">
+            <span className="text-blue-gray-500 text-xs">Your position</span>
+            <span className="text-right text-xs text-blue-gray-900">
               {position === BetPosition?.BULL ? "UP" : "DOWN"}
             </span>
           </span>
@@ -278,13 +278,13 @@ const Round = ({ bet, currentEpoch }: { bet: Bet; currentEpoch: number }) => {
           </div>
         </div>
         <div>
-          <h4 className="text-xs font-medium text-gray-25 mb-1">
+          <h4 className="text-sm font-medium text-blue-gray-900 mb-1">
             Round History
           </h4>
-          <div className="bg-white/5 rounded-lg p-4">
-            <h6 className="text-xs text-gray-100 mb-0.5">Closed Price</h6>
+          <div className="bg-blue-gray-50 rounded-lg p-4">
+            <h6 className="text-xs text-blue-gray-500 mb-0.5">Closed Price</h6>
             <span className="flex items-center mb-[0.4375rem] justify-between">
-              <span className="text-lg lg:text-2xl font-medium text-gray-25">
+              <span className="text-lg lg:text-2xl font-medium text-blue-gray-900">
                 {round?.closePrice
                   ? formatBigIntToFixed(round?.closePrice?.toString(), 4)
                   : 0}
@@ -314,16 +314,16 @@ const Round = ({ bet, currentEpoch }: { bet: Bet; currentEpoch: number }) => {
             </span>
             <div className="space-y-1">
               <span className="flex items-center justify-between">
-                <span className="text-gray-100 text-xs">Locked Price</span>
-                <span className="text-right text-xs text-gray-25">
+                <span className="text-blue-gray-500 text-xs">Locked Price</span>
+                <span className="text-right text-xs text-blue-gray-900">
                   {round?.lockPrice
                     ? formatBigIntToFixed(round?.lockPrice?.toString(), 4)
                     : 0}
                 </span>
               </span>
               <span className="flex items-center justify-between">
-                <span className="text-gray-100 text-xs">Price Pool</span>
-                <span className="text-right text-sm font-medium text-gray-25">
+                <span className="text-blue-gray-500 text-xs">Price Pool</span>
+                <span className="text-right text-sm font-medium text-blue-gray-900">
                   {round?.totalAmount
                     ? Number(round?.totalAmount)?.toFixed(3)
                     : 0}{" "}
@@ -331,14 +331,14 @@ const Round = ({ bet, currentEpoch }: { bet: Bet; currentEpoch: number }) => {
                 </span>
               </span>
               <span className="flex items-center justify-between">
-                <span className="text-gray-100 text-xs">UP</span>
-                <span className="text-right text-xs font-medium text-gray-25">
+                <span className="text-blue-gray-500 text-xs">UP</span>
+                <span className="text-right text-xs font-medium text-blue-gray-900">
                   {round?.bullAmount} HBAR
                 </span>
               </span>
               <span className="flex items-center justify-between">
-                <span className="text-gray-100 text-xs">DOWN</span>
-                <span className="text-right text-xs font-medium text-gray-25">
+                <span className="text-blue-gray-500 text-xs">DOWN</span>
+                <span className="text-right text-xs font-medium text-blue-gray-900">
                   {round?.bearAmount} HBAR
                 </span>
               </span>

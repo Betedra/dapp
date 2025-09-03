@@ -3,11 +3,6 @@ import {
   getDefaultConfig,
   getDefaultWallets,
 } from "@rainbow-me/rainbowkit";
-import {
-  backpackWallet,
-  metaMaskWallet,
-  phantomWallet,
-} from "@rainbow-me/rainbowkit/wallets";
 import { ethers } from "ethers";
 import { cookieStorage, createStorage, http } from "wagmi";
 
@@ -43,13 +38,7 @@ export const config = getDefaultConfig({
   transports: {
     [hedera.id]: http(process.env.NEXT_PUBLIC_RPC_URL!),
   },
-  wallets: [
-    ...wallets,
-    {
-      groupName: "Others",
-      wallets: [metaMaskWallet, phantomWallet, backpackWallet],
-    },
-  ],
+  wallets: [...wallets],
   ssr: true, // If your dApp uses server side rendering (SSR)
   storage: createStorage({
     storage: cookieStorage,

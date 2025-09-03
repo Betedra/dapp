@@ -18,7 +18,7 @@ const useGetRoundsData = (epochs: any[]) => {
 
     query: {
       enabled: epochs !== null && epochs?.length > 0,
-      // refetchInterval: 5000,
+      refetchInterval: 5000,
       refetchIntervalInBackground: true,
     },
   });

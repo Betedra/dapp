@@ -1,4 +1,4 @@
-import { formatEDU } from "@/helpers";
+import { formatHBAR } from "@/helpers";
 import { cn } from "@/utils";
 import BigNumber from "bignumber.js";
 
@@ -40,33 +40,33 @@ const SummaryRow: React.FC<React.PropsWithChildren<SummaryRowProps>> = ({
 
   return (
     <div>
-      <h3 className="text-sm lg:text-base text-gray-50">
+      <h3 className="text-sm lg:text-base text-blue-gray-500">
         {typeTranslationKey}
       </h3>
       <div className="flex justify-between items-center">
         <div>
           <span
-            className={cn("block text-base text-gray-25 font-medium", {
+            className={cn("block text-base text-blue-gray-400 font-medium", {
               "text-success-500": color === summaryTypeColors.won,
               "text-error-400": color === summaryTypeColors.lost,
             })}
           >
-            {rounds} {"Rounds"}
+            {rounds} {rounds > 1 ? "Rounds" : "Round"}
           </span>
-          <span className="lowercase text-xs text-gray-50">
+          <span className="text-xs text-blue-gray-500">
             {type === "entered" ? "Total" : roundsInPercentsDisplay}
           </span>
         </div>
         <div className="text-right">
           <span
-            className={cn("block text-base text-gray-25 font-medium", {
+            className={cn("block text-base text-blue-gray-400 font-medium", {
               "text-success-500": color === summaryTypeColors.won,
               "text-error-400": color === summaryTypeColors.lost,
             })}
           >
-            {`${summaryTypeSigns[type]}${formatEDU(displayAmount, 4)} HBAR`}
+            {`${summaryTypeSigns[type]}${formatHBAR(displayAmount, 3)} HBAR`}
           </span>
-          <span className="lowercase text-xs text-gray-50">
+          <span className="text-xs text-blue-gray-500">
             {`~$${amountInUsd.toFixed(2)}`}
           </span>
         </div>

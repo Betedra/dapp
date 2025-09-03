@@ -266,7 +266,7 @@ export const getFilteredBets = (bets: Bet[], filter: HistoryFilter) => {
   }
 };
 
-export const formatEDU = (
+export const formatHBAR = (
   bnb: number | undefined,
   displayedDecimals: number
 ) => {

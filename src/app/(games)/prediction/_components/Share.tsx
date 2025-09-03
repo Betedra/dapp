@@ -7,14 +7,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import useParticipant from "@/hooks/useParticipant";
 import { NodeRound } from "@/state/types";
 import { cn, formatBigIntToFixed } from "@/utils";
 import download from "downloadjs";
 import * as htmlToImage from "html-to-image";
 import Image from "next/image";
-import Link from "next/link";
-import { QRCodeCanvas } from "qrcode.react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { useAccount } from "wagmi";
@@ -32,7 +29,6 @@ const ReusedComponent = ({
   multiplier,
 }: ShareComponentProps) => {
   const { closePrice, lockPrice, epoch } = round;
-  const { participant, isLoading, isError } = useParticipant();
 
   return (
     <div>
@@ -82,7 +78,7 @@ const ReusedComponent = ({
           <span className="flex flex-col items-end">
             <Image
               src="/svgs/logo.svg"
-              alt="SailFish Finance Logo"
+              alt="Betedra Logo"
               width={111}
               priority
               height={28}
@@ -90,36 +86,6 @@ const ReusedComponent = ({
             <span className="block text-xs">Prediction</span>
           </span>
         </div>
-      </div>
-      <div className="border border-blue-gray-200 rounded-sm py-3 px-4 flex justify-between">
-        <span>
-          <span className="text-gray-50 block text-[0.625rem] mb-1">
-            My referral code
-          </span>
-          {isLoading ? (
-            <span className="text-gray-50 text-xs block">
-              Getting referral code...
-            </span>
-          ) : !isLoading && !isError && participant?.referral_code ? (
-            <span className="text-gray-25 text-xs block">
-              {participant?.referral_code}
-            </span>
-          ) : (
-            <Link
-              href="https://app.sailfish.finance/competition/referral"
-              target="_blank"
-              className="text-primary-400 text-xs block underline"
-            >
-              Generate on SailFish.Finance
-            </Link>
-          )}
-        </span>
-        {!isLoading && !isError && participant?.referral_code ? (
-          <QRCodeCanvas
-            size={36}
-            value={`https://app.sailfish.finance/competition/referral?ref_code=${participant?.referral_code}`}
-          />
-        ) : null}
       </div>
     </div>
   );
@@ -152,7 +118,7 @@ export function Share({
       htmlToImage
         .toPng(node)
         .then((dataUrl) =>
-          download(dataUrl, `sailfish-prediction-win-${round?.epoch}.png`)
+          download(dataUrl, `betedra-prediction-win-${round?.epoch}.png`)
         )
         .catch((error) => {
           toast.error("oops, something went wrong!", {
@@ -179,9 +145,9 @@ export function Share({
             <ShareIcon />
           </button>
         </DialogTrigger>
-        <DialogContent className="max-w-[24.5rem] bg-white border border-onyx rounded-[0.625rem] drop-shadow-container backdrop-blur-sm py-2 px-4 pb-6 text-white">
+        <DialogContent className="max-w-[24.5rem] bg-white border border-onyx rounded-[0.625rem] drop-shadow-container backdrop-blur-sm py-2 px-4 pb-6 text-blue-gray-900">
           <DialogHeader className="mb-[0.625rem]">
-            <DialogTitle className="text-base lg:text-lg font-medium text-white">
+            <DialogTitle className="text-base lg:text-lg font-medium text-blue-gray-900">
               Share your wins
             </DialogTitle>
           </DialogHeader>
@@ -211,10 +177,10 @@ export function Share({
       </Dialog>
       <div
         id="win"
-        className="w-full min-w-[24.5rem] hidden bg-white border border-onyx drop-shadow-container backdrop-blur-sm py-2 px-4 pb-6 text-white"
+        className="w-full min-w-[24.5rem] hidden bg-white border border-onyx drop-shadow-container backdrop-blur-sm py-2 px-4 pb-6 text-blue-gray-900"
       >
-        <h2 className="text-base lg:text-lg font-medium mb-[0.625rem] text-white">
-          SailFish Prediction Win - #{round?.epoch}
+        <h2 className="text-base lg:text-lg font-medium mb-[0.625rem] text-blue-gray-900">
+          Betedra Win - #{round?.epoch}
         </h2>
         <ReusedComponent
           round={round}

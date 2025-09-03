@@ -1,4 +1,4 @@
-import { formatEDU } from "@/helpers";
+import { formatHBAR } from "@/helpers";
 import {
   getMultiplier,
   getNetPayout,
@@ -130,7 +130,7 @@ const PNLHistoryTab = ({ bets, currentEpoch }: PnlTabProps) => {
     <div className="space-y-5 py-4 border-t border-blue-gray-200">
       <div className="space-y-3 border-b border-blue-gray-200 pb-6">
         <div className="flex items-start justify-between">
-          <h3 className="text-sm lg:text-base mb-1 text-gray-50">
+          <h3 className="text-sm lg:text-base mb-1 text-blue-gray-500">
             Net results
           </h3>
           <span className="block text-right">
@@ -142,19 +142,19 @@ const PNLHistoryTab = ({ bets, currentEpoch }: PnlTabProps) => {
                 }
               )}
             >
-              {`${netResultIsPositive ? "+" : ""}${formatEDU(
+              {`${netResultIsPositive ? "+" : ""}${formatHBAR(
                 netResultAmount,
-                4
+                3
               )} HBAR`}
             </p>
-            <p className="text-xs text-gray-50">
+            <p className="text-xs text-blue-gray-500">
               {" "}
               {`~$${netResultInUsd.toFixed(2)}`}
             </p>
           </span>
         </div>
         <div className="flex items-start justify-between">
-          <h3 className="text-sm lg:text-base mb-1 text-gray-50">
+          <h3 className="text-sm lg:text-base mb-1 text-blue-gray-500">
             Average return / round
           </h3>
           <span className="block text-right">
@@ -166,17 +166,19 @@ const PNLHistoryTab = ({ bets, currentEpoch }: PnlTabProps) => {
                 }
               )}
             >
-              {`${avgEDUWonIsPositive ? "+" : ""}${formatEDU(
+              {`${avgEDUWonIsPositive ? "+" : ""}${formatHBAR(
                 avgEDUWonPerRound,
-                4
+                3
               )} HBAR`}
             </p>
-            <p className="text-xs text-gray-50">{avgEDUWonInUsdDisplay}</p>
+            <p className="text-xs text-blue-gray-500">
+              {avgEDUWonInUsdDisplay}
+            </p>
           </span>
         </div>
         {hasBestRound ? (
           <div className="flex items-start justify-between">
-            <h3 className="text-sm lg:text-base mb-1 text-gray-50">
+            <h3 className="text-sm lg:text-base mb-1 text-blue-gray-500">
               Best round: {summary.won.bestRound.id}
             </h3>
             <span className="block text-right">
@@ -185,9 +187,9 @@ const PNLHistoryTab = ({ bets, currentEpoch }: PnlTabProps) => {
                   "text-sm font-medium lg:text-base text-success-500"
                 )}
               >
-                {`${formatEDU(summary.won.bestRound.payout, 4)} HBAR`}
+                {`${formatHBAR(summary.won.bestRound.payout, 3)} HBAR`}
               </p>
-              <p className="text-xs text-gray-50">
+              <p className="text-xs text-blue-gray-500">
                 {" "}
                 {`~$${betRoundInUsd.toFixed(2)}`}
               </p>
@@ -195,7 +197,7 @@ const PNLHistoryTab = ({ bets, currentEpoch }: PnlTabProps) => {
           </div>
         ) : null}
         <div className="flex items-start justify-between">
-          <h3 className="text-sm lg:text-base mb-1 text-gray-50">
+          <h3 className="text-sm lg:text-base mb-1 text-blue-gray-500">
             Average position entered
           </h3>
           <span className="block text-right">
@@ -204,9 +206,9 @@ const PNLHistoryTab = ({ bets, currentEpoch }: PnlTabProps) => {
                 "text-sm font-medium lg:text-base text-success-500"
               )}
             >
-              {`${formatEDU(avgPositionEntered, 4)} HBAR`}
+              {`${formatHBAR(avgPositionEntered, 3)} HBAR`}
             </p>
-            <p className="text-xs text-gray-50">
+            <p className="text-xs text-blue-gray-500">
               {avgPositionEnteredInUsdDisplay}
             </p>
           </span>

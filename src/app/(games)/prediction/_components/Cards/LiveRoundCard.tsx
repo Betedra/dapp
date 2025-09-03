@@ -9,7 +9,7 @@ import {
   formatBigIntToFixedNumber,
   formatPriceDifference,
 } from "@/utils";
-import { formatEther } from "ethers";
+import { formatUnits } from "ethers";
 import React, { useEffect, useMemo, useState } from "react";
 import CountUp from "react-countup";
 import { FaArrowDownLong } from "react-icons/fa6";
@@ -238,7 +238,7 @@ const LiveRoundCard = ({
                 </span>
               ) : null}
             </span>
-            <div className="space-y-0.5 text-xs">
+            <div className="space-y-0.5 text-xs flex items-start justify-between">
               <span className="block">
                 <span className="text-blue-gray-500 block mb-1">
                   Locked Price
@@ -249,13 +249,13 @@ const LiveRoundCard = ({
                     : 0}
                 </span>
               </span>
-              <span className="block">
+              <span className="block text-right">
                 <span className="text-blue-gray-500 block mb-1">
                   Prize Pool
                 </span>
                 <span className="text-blue-gray-800 font-medium text-sm">
                   {totalAmount
-                    ? Number(formatEther(totalAmount))?.toFixed(3)
+                    ? Number(formatUnits(totalAmount, 8))?.toFixed(3)
                     : 0}{" "}
                   HBAR
                 </span>

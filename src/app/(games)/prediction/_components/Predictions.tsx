@@ -20,37 +20,37 @@ const Predictions = () => {
   const [firstLoad, setFirstLoad] = useState(true);
   const { price } = usePollOraclePrice();
 
-  const { rounds, currentEpoch, loading, refreshLedger } =
+  const { rounds, currentEpoch, loading, refetch, refreshLedger } =
     useGetSortedRoundsCurrentEpoch();
 
-  // useEffect(() => {
-  //   if (!rounds) return;
-  //   const intervalSeconds = 3;
-  //   const previousEpoch = currentEpoch;
+  useEffect(() => {
+    if (!rounds) return;
+    const intervalSeconds = 3;
+    const previousEpoch = currentEpoch;
 
-  //   const round = rounds.find((round) => round.epoch === previousEpoch + 1);
+    const round = rounds.find((round) => round.epoch === previousEpoch + 1);
 
-  //   if (!round) return;
+    if (!round) return;
 
-  //   const currentTimestamp = Math.floor(Date.now() / 1000); // Current time in seconds
-  //   const nextRoundStart = round?.startTimestamp + intervalSeconds; // When the next round starts
-  //   const timeUntilNextRound = (nextRoundStart - currentTimestamp) * 1000; // Convert to ms
+    const currentTimestamp = Math.floor(Date.now() / 1000); // Current time in seconds
+    const nextRoundStart = round?.startTimestamp + intervalSeconds; // When the next round starts
+    const timeUntilNextRound = (nextRoundStart - currentTimestamp) * 1000; // Convert to ms
 
-  //   if (timeUntilNextRound <= 0) {
-  //     // console.log("Immediate refetch because the round has already started");
-  //     refetch?.();
-  //     return;
-  //   }
+    if (timeUntilNextRound <= 0) {
+      // console.log("Immediate refetch because the round has already started");
+      refetch?.();
+      return;
+    }
 
-  //   // console.log("Next refetch in:", timeUntilNextRound / 1000, "seconds");
+    // console.log("Next refetch in:", timeUntilNextRound / 1000, "seconds");
 
-  //   const timeout = setTimeout(() => {
-  //     // console.log("Refetching at round start...");
-  //     refetch?.();
-  //   }, timeUntilNextRound);
+    const timeout = setTimeout(() => {
+      // console.log("Refetching at round start...");
+      refetch?.();
+    }, timeUntilNextRound);
 
-  //   return () => clearTimeout(timeout); // Cleanup on unmount
-  // }, [currentEpoch, rounds, refetch]);
+    return () => clearTimeout(timeout); // Cleanup on unmount
+  }, [currentEpoch, rounds, refetch]);
 
   const previousEpoch = currentEpoch > 0 ? currentEpoch - 1 : currentEpoch;
   const swiperIndex = rounds?.findIndex(
@@ -133,7 +133,7 @@ const Predictions = () => {
                   {timeLeft}
                 </span>
                 <span className="text-xs lg:text-sm text-blue-gray-500">
-                  5m
+                  / 5m
                 </span>
               </span>
             ) : (

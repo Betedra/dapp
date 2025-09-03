@@ -1,7 +1,7 @@
 import { getHasRoundFailed } from "@/helpers";
 import { Bet, BetPosition } from "@/state/types";
 import { PredictionsRoundsResponse } from "@/utils/types";
-import { formatEther } from "ethers";
+import { formatUnits } from "ethers";
 import { useAccount } from "wagmi";
 import useGetClaimStatuses from "./useGetClaimStatuses";
 import useGetRoundsData from "./useGetRoundsData";
@@ -46,7 +46,7 @@ const useGetHistory = (page = 1) => {
       const closePrice = round.closePrice;
       const lockPrice = round.lockPrice;
       const AIPrice = round.AIPrice
-        ? parseFloat(formatEther(round.AIPrice))
+        ? parseFloat(formatUnits(round.AIPrice, 8))
         : null;
 
       const getRoundPosition = () => {
@@ -69,7 +69,7 @@ const useGetHistory = (page = 1) => {
         {
           id: null,
           hash: null,
-          amount: parseFloat(formatEther(ledgerAmount)),
+          amount: parseFloat(formatUnits(ledgerAmount, 8)),
           position: ledger.position,
           claimed: ledger.claimed,
           claimedAt: null,
@@ -106,11 +106,11 @@ const useGetHistory = (page = 1) => {
             closePrice,
             closeBlock: null,
             totalBets: 0,
-            totalAmount: parseFloat(formatEther(round.totalAmount)),
+            totalAmount: parseFloat(formatUnits(round.totalAmount, 8)),
             bullBets: 0,
-            bullAmount: parseFloat(formatEther(round.bullAmount)),
+            bullAmount: parseFloat(formatUnits(round.bullAmount, 8)),
             bearBets: 0,
-            bearAmount: parseFloat(formatEther(round.bearAmount)),
+            bearAmount: parseFloat(formatUnits(round.bearAmount, 8)),
             position: getRoundPosition(),
             AIPrice,
           },

@@ -122,7 +122,7 @@ const CancelledRoundCard = ({ round, betPosition }: CanceledRoundCardProps) => {
                 />
               ) : null}
               <Link
-                href="https://vedex.gitbook.io/docs/sailfish-prediction/how-prediction-works"
+                href="https://vedex.gitbook.io/docs/betedra/how-prediction-works"
                 target="_blank"
                 className="underline text-sm text-blue-500"
               >

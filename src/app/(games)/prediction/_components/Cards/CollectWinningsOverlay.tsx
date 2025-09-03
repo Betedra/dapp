@@ -1,6 +1,5 @@
-
 import { NodeLedger, NodeRound } from "@/state/types";
-import { formatEther } from "ethers";
+import { formatUnits } from "ethers";
 import ClaimWinning from "../ClaimWinning";
 import Share from "../Share";
 import Image from "next/image";
@@ -29,17 +28,12 @@ const CollectWinningsOverlay = ({
           round={round}
           betAmount={Number(
             (
-              Number(formatEther(betAmount?.toString() ?? "0")) *
+              Number(formatUnits(betAmount?.toString() ?? "0", 8)) *
               (Number(multiplier) || 1)
             ).toFixed(3)
           )}
         />
-        <Share
-          className="text-primary"
-          round={round}
-          multiplier={multiplier}
-          position={position}
-        />
+        <Share round={round} multiplier={multiplier} position={position} />
       </div>
     </>
   );

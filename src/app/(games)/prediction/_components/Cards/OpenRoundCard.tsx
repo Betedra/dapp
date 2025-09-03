@@ -3,7 +3,7 @@ import PrimaryButton from "@/components/shared/Buttons";
 import { getNowInSeconds } from "@/hooks/useCountdown";
 import { BetPosition, NodeLedger, NodeRound } from "@/state/types";
 import { cn } from "@/utils";
-import { formatEther } from "ethers";
+import { formatUnits } from "ethers";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FaArrowDownLong } from "react-icons/fa6";
 import { useAccount } from "wagmi";
@@ -160,7 +160,7 @@ const OpenRoundCard = ({
                 </span>
                 <span className="text-sm text-blue-gray-900 font-medium leading-6 inline-block">
                   {totalAmount
-                    ? Number(formatEther(totalAmount))?.toFixed(3)
+                    ? Number(formatUnits(totalAmount, 8))?.toFixed(3)
                     : 0}{" "}
                   HBAR
                 </span>
@@ -200,7 +200,9 @@ const OpenRoundCard = ({
                 <span>{positionEnteredText} entered</span>
               </span>
               <span className="text-right text-base">
-                {totalAmount ? Number(formatEther(totalAmount))?.toFixed(3) : 0}{" "}
+                {totalAmount
+                  ? Number(formatUnits(totalAmount, 8))?.toFixed(3)
+                  : 0}{" "}
                 HBAR
               </span>
             </span>

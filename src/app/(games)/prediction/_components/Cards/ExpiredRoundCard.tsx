@@ -12,7 +12,7 @@ import {
   formatBigIntToFixedNumber,
   formatPriceDifference,
 } from "@/utils";
-import { formatEther } from "ethers";
+import { formatUnits } from "ethers";
 import React from "react";
 import { FaArrowDownLong } from "react-icons/fa6";
 import CalculatingRoundCard from "./CalculatingRoundCard";
@@ -180,7 +180,9 @@ const ExpiredRoundCard = ({
             <span className="block text-right">
               <span className="text-blue-gray-500 block mb-1">Prize Pool</span>
               <span className="text-blue-gray-800 font-medium text-sm">
-                {totalAmount ? Number(formatEther(totalAmount))?.toFixed(3) : 0}{" "}
+                {totalAmount
+                  ? Number(formatUnits(totalAmount, 8))?.toFixed(3)
+                  : 0}{" "}
                 HBAR
               </span>
             </span>

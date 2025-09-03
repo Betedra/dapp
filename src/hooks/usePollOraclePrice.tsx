@@ -11,7 +11,7 @@ const usePollPredictionPrice = () => {
     address: predictionAddress,
     functionName: "getPriceFromOracle",
     query: {
-      // refetchInterval: 500,
+      refetchInterval: 1000,
       refetchIntervalInBackground: true,
     },
   });

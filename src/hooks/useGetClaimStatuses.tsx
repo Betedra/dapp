@@ -17,7 +17,7 @@ const useGetClaimStatuses = (epochs: any[], account: string) => {
     allowFailure: false,
     query: {
       enabled: epochs !== null && epochs?.length > 0,
-      // refetchInterval: 300000,
+      refetchInterval: 300000,
       refetchIntervalInBackground: true,
     },
   });

@@ -1,5 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
+import { FaXTwitter } from "react-icons/fa6";
 
 const Footer = () => {
   return (
@@ -10,7 +12,19 @@ const Footer = () => {
         width={113}
         height={46.11}
       />
-      <span className="flex items-center space-x-4 text-blue-gray-25 text-xs">
+      <Link
+        target="_blank"
+        href="https://x.com/betedra_fun"
+        className="hover:underline transition-all flex items-center space-x-2 duration-75 text-blue-gray-100"
+      >
+        <FaXTwitter size={16} />
+        <span>Follow on twitter (X)</span>
+      </Link>
+      <Link
+        href="https://hedera.com/"
+        target="_blank"
+        className="flex items-center space-x-4 text-blue-gray-25 text-xs"
+      >
         <span>Powered by</span>
         <Image
           src="/svgs/hedera.svg"
@@ -18,7 +32,7 @@ const Footer = () => {
           width={79.87}
           height={23.56}
         />
-      </span>
+      </Link>
     </footer>
   );
 };
