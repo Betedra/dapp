@@ -208,7 +208,7 @@ const LiveRoundCard = ({
                 delay={0}
                 end={price}
                 prefix="$"
-                decimals={5}
+                decimals={4}
                 duration={1}
               >
                 {({ countUpRef }) => (

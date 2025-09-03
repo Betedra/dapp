@@ -25,7 +25,7 @@ export const formatPriceDifference = (
   digitDecimal: number = 2,
   format = true
 ) => {
-  const price = Number(formatUnits(value, 6));
+  const price = Number(formatUnits(value, 8));
 
   if (!format) return price;
 
@@ -33,13 +33,13 @@ export const formatPriceDifference = (
 };
 
 export const formatBigIntToFixed = (value: string, digitDecimal: number) => {
-  const price = Number(formatUnits(value, 6));
+  const price = Number(formatUnits(value, 8));
 
   return currencyFormatter(price, digitDecimal);
 };
 
 export const formatBigIntToFixedNumber = (value: string) => {
-  const price = Number(formatUnits(value, 6));
+  const price = Number(formatUnits(value, 8));
 
   return price;
 };
