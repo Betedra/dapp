@@ -80,7 +80,7 @@ export function ClaimWinning({ round, betAmount, disabled }: Props) {
         <PrimaryButton
           disabled={claimed || isSuccess}
           text={claimed || isSuccess ? "Claimed" : "Claim earning"}
-          className="px-6 ring-[#334058] text-sm leading-6 py-[0.375rem]"
+          className="ring-[#334058] text-sm"
         />
       </DialogTrigger>
       <DialogContent className="sm:max-w-[17.9375rem] bg-white rounded-2xl py-8 px-6 text-mine-shaft">

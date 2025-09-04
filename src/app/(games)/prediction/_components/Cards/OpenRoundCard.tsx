@@ -186,7 +186,7 @@ const OpenRoundCard = ({
               </span>
             </div>
           ) : (
-            <span className="flex border rounded-sm text-blue-gray-900 justify-between border-blue-gray-200 px-2 py-[0.4375rem] opacity-50">
+            <span className="flex border rounded-sm text-blue-gray-900 justify-between border-blue-gray-200 px-2 py-[0.4375rem]">
               <span className="flex items-center space-x-1 text-sm">
                 {positionEnteredText ? (
                   <FaArrowDownLong
@@ -209,7 +209,7 @@ const OpenRoundCard = ({
           )}
 
           {/* down */}
-          <span className="block point-down bg-blue-gray-200 h-[3.875rem] rounded-b-full text-center">
+          <span className="block point-down bg-blue-gray-200 h-[3.875rem] pb-4 rounded-b-full text-center">
             <h4 className="text-sm text-error-500 font-medium">Down</h4>
 
             {Number(bearMultiplier) ? (

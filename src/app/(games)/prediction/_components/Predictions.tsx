@@ -25,7 +25,7 @@ const Predictions = () => {
 
   useEffect(() => {
     if (!rounds) return;
-    const intervalSeconds = 3;
+    const intervalSeconds = 0;
     const previousEpoch = currentEpoch;
 
     const round = rounds.find((round) => round.epoch === previousEpoch + 1);
