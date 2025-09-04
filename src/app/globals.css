@@ -22,6 +22,7 @@
   --color-blue-100: #adedff;
   --color-blue-50: #ccf4ff;
   --color-purple-900: #1c0033;
+  --color-purple-600: #6e00cc;
   --color-purple-500: #8a01ff;
   --color-gray-25: #f4f4f4;
   --color-success-500: #51af7d;
@@ -30,11 +31,13 @@
   --color-success-100: #d1f8e3;
   --color-success-50: #e9fcf2;
   --color-success-25: #f0fdf6;
+  --color-error-600: #d92d20;
   --color-error-500: #f04438;
   --color-error-400: #f97066;
   --color-error-100: #fee4e2;
   --color-error-25: #fffafa;
   --color-mine-shaft: #2d2d2d;
+  --color-dodger-blue: #4690f9;
 }
 
 *,
@@ -58,6 +61,15 @@ button {
 
   .styled-shadow.red {
     box-shadow: 0px 1px 0px 2px #f97066;
+  }
+
+  .lottery-gradient {
+    background: linear-gradient(
+      155.25deg,
+      #00c6ff -54%,
+      #4690f9 35.4%,
+      #8a01ff 128.47%
+    );
   }
 
   .point-up {

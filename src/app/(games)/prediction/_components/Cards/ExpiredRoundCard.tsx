@@ -192,7 +192,7 @@ const ExpiredRoundCard = ({
         {/* down */}
         <span
           className={cn(
-            `block point-down bg-blue-gray-200 h-[3.875rem] rounded-b-full text-center`,
+            `block point-down bg-blue-gray-200 h-[3.875rem] pb-4 rounded-b-full text-center`,
             {
               "bg-error-500": !priceWhenUp && priceWhenUp !== null,
             }

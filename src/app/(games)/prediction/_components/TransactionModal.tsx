@@ -44,7 +44,7 @@ const TransactionModal = ({
           </span>
           <span className="block border text-xs border-blue-gray-200 px-4 py-[0.4375rem] rounded-sm">
             <h6 className="mb-1">{position} Position entered</h6>
-            <span className="text-gray-100">Bet Amount: {betAmount}</span>
+            <span className="text-blue-gray-800">Bet Amount: {betAmount}</span>
           </span>
           <div className="bg-secondary-700 mt-4 text-blue-gray-900 text-xs lg:text-sm px-4 rounded py-[0.4375rem] flex items-start space-x-1">
             <span className="inline-block text-base">🎉</span>

@@ -1,8 +1,31 @@
+import Image from "next/image";
 import React from "react";
 import Predictions from "./_components/Predictions";
+import Link from "next/link";
 
 function page() {
-  return <Predictions />;
+  return (
+    <>
+      <Predictions />
+      <Link
+        href="https://insights.pyth.network/price-feeds/Crypto.HBAR%2FUSD"
+        target="_blank"
+        className="border border-blue-gray-200 rounded-md flex items-center space-x-3 px-4 py-3 bottom-6 right-5 absolute"
+      >
+        <Image
+          src="/images/pyth.jpg"
+          alt="Pyth"
+          width={30}
+          height={30}
+          className="rounded-full"
+        />
+        <span className="block text-blue-gray-900">
+          <h5 className="font-semibold text-sm">Market Data</h5>
+          <h6 className="text-xs">Pyth Price Oracle</h6>
+        </span>
+      </Link>
+    </>
+  );
 }
 
 export default page;

@@ -212,12 +212,8 @@ const Round = ({ bet, currentEpoch }: { bet: Bet; currentEpoch: number }) => {
         (isClaimable || claimed) &&
         !isRefundable &&
         position !== BetPosition.HOUSE ? (
-          <div className="flex items-center justify-between w-full space-x-4 mt-2 mb-4">
-            <Share
-              className="border-blue-gray-200 text-white mr-0"
-              round={round as any}
-              multiplier={multiplier.toString()}
-            />
+          <div className="flex items-center justify-between w-full gap-2 px-3 mt-2 mb-4">
+            <Share round={round as any} multiplier={multiplier.toString()} />
             <ClaimWinning
               round={round as any}
               disabled={claimed}

@@ -18,7 +18,7 @@ const Footer = () => {
         className="hover:underline transition-all flex items-center space-x-2 duration-75 text-blue-gray-100"
       >
         <FaXTwitter size={16} />
-        <span>Follow on twitter (X)</span>
+        <span>Follow on Twitter (X)</span>
       </Link>
       <Link
         href="https://hedera.com/"

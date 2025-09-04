@@ -15,7 +15,7 @@ async function GameLayout({ children }: Props) {
     <Providers cookies={cookies}>
       <div className="pt-[1.4375rem] relative">
         <Header />
-        <main className="min-h-dvh">{children}</main>
+        <main className="min-h-[90dvh] relative">{children}</main>
         <Footer />
       </div>
     </Providers>
