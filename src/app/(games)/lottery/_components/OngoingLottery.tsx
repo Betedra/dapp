@@ -3,6 +3,8 @@ import PrimaryButton from "@/components/shared/Buttons";
 import { currencyFormatter } from "@/utils";
 import Image from "next/image";
 import React from "react";
+import BuyTickets from "./BuyTickets";
+import ViewUserTickets from "./ViewUserTickets";
 
 interface MatchCardProps {
   label: string;
@@ -28,7 +30,7 @@ const MatchCard = ({ label, amount }: MatchCardProps) => {
 const OngoingLottery = () => {
   return (
     <section className="mb-[2.625rem] px-4 xl:px-0">
-      <div className="mx-auto max-w-[83.5625rem] mb-[3.4375rem] isolate rounded-2xl flex justify-center items-center relative lottery-gradient min-h-[23rem]">
+      <div className="mx-auto max-w-[83.5625rem] overflow-hidden mb-[3.4375rem] isolate rounded-2xl flex justify-center items-center relative lottery-gradient min-h-[23rem]">
         <Image
           src="/svgs/radial-sun-burst.svg"
           alt="Radial Sun burst"
@@ -39,14 +41,14 @@ const OngoingLottery = () => {
           <Image
             src="/images/glowing-star.gif"
             alt="Glowing star"
-            className="absolute bottom-0 -left-52 -rotate-y-180"
+            className="absolute bottom-0 -left-36 md:-left-52 -rotate-y-180"
             width={150}
             height={150}
           />
           <Image
             src="/images/glowing-star.gif"
             alt="Glowing star"
-            className="absolute bottom-0 -right-52"
+            className="absolute bottom-0 -right-36 md:-right-52"
             width={150}
             height={150}
           />
@@ -57,9 +59,13 @@ const OngoingLottery = () => {
             {currencyFormatter(5000)}
           </h2>
           <span className="block text-base font-semibold mb-8">in prizes</span>
-          <PrimaryButton
-            text="Buy ticket"
-            className="max-w-[10.4375rem] mx-auto"
+          <BuyTickets
+            trigger={
+              <PrimaryButton
+                text="Buy tickets"
+                className="max-w-[10.4375rem] mx-auto"
+              />
+            }
           />
         </div>
       </div>
@@ -89,7 +95,7 @@ const OngoingLottery = () => {
           </div>
         </div>
         <div className="w-full border border-blue-gray-200 rounded-2xl overflow-hidden">
-          <div className="bg-blue-gray-100 px-8 py-2.5 flex items-center justify-between">
+          <div className="bg-blue-gray-100 p-4 md:px-8 md:py-2.5 flex space-y-3 md:space-y-0 md:items-center flex-col md:flex-row justify-between">
             <span className="font-medium text-base text-blue-gray-600">
               Your tickets
             </span>
@@ -100,7 +106,17 @@ const OngoingLottery = () => {
               </span>{" "}
               tickets in this round
             </span>
-            <PrimaryButton text="Buy ticket" className="max-w-[7.1875rem]" />
+            <span className="flex items-center space-x-[1.125rem]">
+              <ViewUserTickets />
+              <BuyTickets
+                trigger={
+                  <PrimaryButton
+                    text="Buy tickets"
+                    className="max-w-[7.1875rem] whitespace-nowrap"
+                  />
+                }
+              />
+            </span>
           </div>
           <div className="px-8 py-4">
             <p className="text-base text-blue-gray-600 mb-[1.4375rem]">

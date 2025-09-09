@@ -2,6 +2,7 @@
 import PrimaryButton from "@/components/shared/Buttons";
 import Image from "next/image";
 import React from "react";
+import BuyTickets from "./BuyTickets";
 
 const steps = [
   {
@@ -50,7 +51,11 @@ const HowToPlay = () => {
               </div>
             ))}
           </div>
-          <PrimaryButton text="Join round" className="max-w-[9.3125rem]" />
+          <BuyTickets
+            trigger={
+              <PrimaryButton text="Join round" className="max-w-[9.3125rem]" />
+            }
+          />
         </div>
         <div className="w-full bg-blue-gray-25 rounded-2xl py-[2.4375rem] px-[1.8125rem]">
           <h4 className="font-bold text-blue-gray-900 text-2xl lg:text-[2rem] mb-3">
