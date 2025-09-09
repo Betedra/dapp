@@ -2,9 +2,13 @@
 import CupIcon from "@/components/custom_icons/CupIcon";
 import TicketIcon from "@/components/custom_icons/TicketIcon";
 import UserIcon from "@/components/custom_icons/UserIcon";
+import PrimaryButton from "@/components/shared/Buttons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { currencyFormatter } from "@/utils";
 import React from "react";
+import { LuArrowLeft, LuArrowRight, LuArrowRightToLine } from "react-icons/lu";
+import BuyTickets from "./BuyTickets";
+import Numbers from "./Numbers";
 
 interface MatchCardProps {
   label: string;
@@ -34,14 +38,36 @@ const MatchCard = ({ label, amount }: MatchCardProps) => {
 const AllHistory = () => {
   return (
     <div className="border border-blue-gray-200 rounded-2xl">
-      <div className="flex items-center justify-between pb-5 pt-2.5 px-8"></div>
+      <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 items-center justify-between pb-5 pt-2.5 px-8">
+        <span className="flex items-center space-x-1 text-base text-blue-gray-500">
+          <span>Round</span>
+          <span className="border block p-2 rounded-xl border-blue-gray-300">
+            #1256
+          </span>
+        </span>
+        <div className="flex items-center gap-3">
+          <button className="border-blue-gray-300 border rounded-[0.75rem] p-2 text-blue-gray-900">
+            <LuArrowLeft size={24} />
+          </button>
+          <button className="border-blue-gray-300 border rounded-[0.75rem] p-2 text-blue-gray-900">
+            <LuArrowRight size={24} />
+          </button>
+          <button className="border-blue-gray-300 border rounded-[0.75rem] p-2 text-blue-gray-900">
+            <LuArrowRightToLine size={24} />
+          </button>
+        </div>
+        <span className="text-base font-medium text-blue-gray-600">
+          Drawn on - Aug 30, 2025. 1:00 PM
+        </span>
+      </div>
       <div className="bg-blue-500 px-8 py-7 flex items-center justify-between">
         <span className="text-base font-medium text-blue-gray-600">
           Winning numbers
         </span>
+        <Numbers className="gap-2" />
       </div>
       <div className="flex flex-wrap lg:flex-nowrap gap-[1.4375rem] px-8 py-4">
-        <div className="w-full lg:max-w-[15.25rem] p-4 flex items-start space-y-[3.375rem] pb-[1.6875rem] flex-col">
+        <div className="w-full lg:max-w-[15.25rem] py-4 md:px-4 flex md:items-start gap-[3.375rem] md:pb-[1.6875rem] md:flex-col">
           <div className="flex items-start space-x-1">
             <span className="flex items-center justify-center rounded-full bg-blue-gray-100 size-11">
               <CupIcon />
@@ -97,6 +123,27 @@ const AllHistory = () => {
   );
 };
 
+const UserHistory = () => {
+  const isEmpty = true;
+
+  if (isEmpty) {
+    return (
+      <div className="border border-blue-gray-200 text-base text-center text-blue-gray-600 rounded-2xl min-h-[24.6875rem] flex items-center justify-center flex-col">
+        <p className="mb-1.5">No lottery history found</p>
+        <p className="mb-6">Get tickets for the next round</p>
+        <BuyTickets
+          trigger={
+            <PrimaryButton text="Buy tickets" className="max-w-[12.125rem]" />
+          }
+        />
+      </div>
+    );
+  }
+  return (
+    <div className="border border-blue-gray-200 rounded-2xl min-h-[24.6875rem]"></div>
+  );
+};
+
 const PastRounds = () => {
   return (
     <section className="py-[4.6875rem] px-4 xl:px-0">
@@ -121,7 +168,9 @@ const PastRounds = () => {
         <TabsContent value="all">
           <AllHistory />
         </TabsContent>
-        <TabsContent value="user"></TabsContent>
+        <TabsContent value="user">
+          <UserHistory />
+        </TabsContent>
       </Tabs>
     </section>
   );

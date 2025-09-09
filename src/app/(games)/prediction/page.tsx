@@ -1,7 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import Predictions from "./_components/Predictions";
-import Link from "next/link";
 
 function page() {
   return (
@@ -10,7 +10,7 @@ function page() {
       <Link
         href="https://insights.pyth.network/price-feeds/Crypto.HBAR%2FUSD"
         target="_blank"
-        className="border border-blue-gray-200 rounded-md flex items-center space-x-3 px-4 py-3 bottom-6 right-5 absolute"
+        className="mt-8 md:mb-0 bg-white border border-blue-gray-200 rounded-md flex items-center space-x-3 px-4 py-3 bottom-6 right-5 static md:absolute"
       >
         <Image
           src="/images/pyth.jpg"

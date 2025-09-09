@@ -1,0 +1,37 @@
+import Ball from "@/components/vectors/Ball";
+import { cn } from "@/utils";
+import React from "react";
+
+interface Props {
+  className?: string;
+}
+
+const Numbers = ({ className }: Props) => {
+  return (
+    <div className={cn("grid grid-cols-6 gap-[0.35rem]", className)}>
+      {Array(6)
+        .fill("")
+        .map((_, index) => {
+          const randomNumber = Math.floor(Math.random() * 21) - 10;
+          return (
+            <span
+              key={index}
+              className="flex items-center justify-center size-[2.448125rem] rounded-full relative"
+            >
+              <Ball className="absolute top-0 left-0 size-full" />
+              <span
+                style={{
+                  rotate: `${randomNumber}deg`,
+                }}
+                className="from-blue-500 via-dodger-blue to-purple-500 bg-gradient-to-b bg-clip-text text-transparent font-bold text-sm lg:text-[1.39875rem] text-center"
+              >
+                {index + 1}
+              </span>
+            </span>
+          );
+        })}
+    </div>
+  );
+};
+
+export default Numbers;
