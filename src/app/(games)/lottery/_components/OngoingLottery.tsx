@@ -106,7 +106,7 @@ const OngoingLottery = () => {
               </span>{" "}
               tickets in this round
             </span>
-            <span className="flex items-center space-x-[1.125rem]">
+            <span className="flex items-center space-x-[1.125rem] text-blue-600">
               <ViewUserTickets />
               <BuyTickets
                 trigger={

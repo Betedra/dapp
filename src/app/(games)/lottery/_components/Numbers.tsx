@@ -16,14 +16,14 @@ const Numbers = ({ className }: Props) => {
           return (
             <span
               key={index}
-              className="flex items-center justify-center size-[2.448125rem] rounded-full relative"
+              className="flex items-center justify-center text-sm lg:text-[1.39875rem] size-[2.448125rem] rounded-full relative"
             >
               <Ball className="absolute top-0 left-0 size-full" />
               <span
                 style={{
                   rotate: `${randomNumber}deg`,
                 }}
-                className="from-blue-500 via-dodger-blue to-purple-500 bg-gradient-to-b bg-clip-text text-transparent font-bold text-sm lg:text-[1.39875rem] text-center"
+                className="from-blue-500 via-dodger-blue to-purple-500 bg-gradient-to-b bg-clip-text text-transparent font-bold text-center"
               >
                 {index + 1}
               </span>

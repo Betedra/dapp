@@ -20,7 +20,7 @@ const ViewUserTickets = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="underline whitespace-nowrap text-blue-600 font-medium text-sm lg:text-base">
+        <button className="underline whitespace-nowrap text-inherit font-medium text-sm lg:text-base">
           View your tickets
         </button>
       </DialogTrigger>
