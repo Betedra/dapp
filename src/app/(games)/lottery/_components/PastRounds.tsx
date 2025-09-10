@@ -13,7 +13,7 @@ import ViewUserTickets from "./ViewUserTickets";
 
 const RoundDetails = () => {
   return (
-    <div className="flex flex-wrap lg:flex-nowrap gap-[1.4375rem] px-8 py-4">
+    <div className="flex flex-wrap lg:flex-nowrap gap-[1.4375rem] px-4 md:px-8 py-4">
       <div className="w-full lg:max-w-[15.25rem] py-4 md:px-4 flex md:items-start gap-[3.375rem] md:pb-[1.6875rem] md:flex-col">
         <div className="flex items-start space-x-1">
           <span className="flex items-center justify-center rounded-full bg-blue-gray-100 size-11">
@@ -95,7 +95,9 @@ const Round = () => {
           <span className="text-right">1</span>
           <button className="text-blue-500" onClick={toggleVisibility}>
             <span className="group-data-[state=open]:hidden">Show</span>
-            <span className="group-data-[state=closed]:hidden">Hide</span>
+            <span className="hidden group-data-[state=open]:inline-block">
+              Hide
+            </span>
           </button>
         </div>
       </div>
@@ -104,12 +106,12 @@ const Round = () => {
           "h-0 overflow-hidden transition-all duration-75 opacity-0 group-data-[state=open]:opacity-100 group-data-[state=open]:mt-6 group-data-[state=open]:h-auto"
         )}
       >
-        <div className="bg-blue-500 px-8 py-7 flex items-center justify-between rounded-2xl">
+        <div className="bg-blue-500 px-8 py-7 flex flex-col md:flex-row space-y-4 md:space-y-0 items-center justify-between rounded-2xl">
           <span className="text-base font-medium text-blue-gray-600">
             Winning numbers
           </span>
-          <div className="flex gap-6 items-center text-white">
-            <Numbers className="gap-2 *:lg:size-[3.5rem]" />
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center text-white">
+            <Numbers className="gap-2 *:size-[3.5rem] *:text-[1.39875rem]" />
             <ViewUserTickets />
           </div>
         </div>
@@ -169,11 +171,11 @@ const AllHistory = () => {
           Drawn on - Aug 30, 2025. 1:00 PM
         </span>
       </div>
-      <div className="bg-blue-500 px-8 py-7 flex items-center justify-between">
+      <div className="bg-blue-500 px-8 py-7 flex flex-col md:flex-row space-y-4 md:space-y-0 items-center justify-between">
         <span className="text-base font-medium text-blue-gray-600">
           Winning numbers
         </span>
-        <Numbers className="gap-2 *:lg:size-[3.5rem]" />
+        <Numbers className="gap-2 *:size-[3.5rem] *:text-[1.39875rem]" />
       </div>
       <RoundDetails />
     </div>
