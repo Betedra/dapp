@@ -4,11 +4,120 @@ import TicketIcon from "@/components/custom_icons/TicketIcon";
 import UserIcon from "@/components/custom_icons/UserIcon";
 import PrimaryButton from "@/components/shared/Buttons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { currencyFormatter } from "@/utils";
-import React from "react";
+import { cn, currencyFormatter } from "@/utils";
+import React, { MouseEvent, useState } from "react";
 import { LuArrowLeft, LuArrowRight, LuArrowRightToLine } from "react-icons/lu";
 import BuyTickets from "./BuyTickets";
 import Numbers from "./Numbers";
+import ViewUserTickets from "./ViewUserTickets";
+
+const RoundDetails = () => {
+  return (
+    <div className="flex flex-wrap lg:flex-nowrap gap-[1.4375rem] px-8 py-4">
+      <div className="w-full lg:max-w-[15.25rem] py-4 md:px-4 flex md:items-start gap-[3.375rem] md:pb-[1.6875rem] md:flex-col">
+        <div className="flex items-start space-x-1">
+          <span className="flex items-center justify-center rounded-full bg-blue-gray-100 size-11">
+            <CupIcon />
+          </span>
+          <div className="text-blue-gray-900">
+            <h4 className="text-sm font-semibold mb-1">Prize Pot</h4>
+            <h2 className="font-bold leading-5 text-xl lg:text-2xl">
+              {currencyFormatter(5000)}
+            </h2>
+            <span className="text-blue-gray-600 text-xs font-medium">
+              ~22,678 HBAR
+            </span>
+          </div>
+        </div>
+        <div className="flex items-start space-x-1">
+          <span className="flex items-center justify-center rounded-full bg-blue-gray-100 size-11">
+            <UserIcon />
+          </span>
+          <div className="text-blue-gray-900">
+            <h4 className="text-sm font-semibold mb-1">Total Players</h4>
+            <h2 className="font-bold leading-5 text-xl lg:text-2xl">50</h2>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full">
+        <p className="text-base text-blue-gray-600 mb-[1.4375rem]">
+          Match the winning number in the same order to share prizes. Current
+          prizes up for grabs:
+        </p>
+        <div className="flex flex-wrap lg:flex-nowrap justify-between items-center gap-[1.75rem]">
+          <div className="w-full grid grid-cols-2 gap-y-[1.4375rem] md:grid-cols-3 place-content-between">
+            <MatchCard label="Match first 1" amount={500} />
+            <MatchCard label="Match first 2" amount={500} />
+            <MatchCard label="Match first 3" amount={500} />
+            <MatchCard label="Match first 4" amount={500} />
+            <MatchCard label="Match first 5" amount={500} />
+            <MatchCard label="Match all 6" amount={500} />
+          </div>
+          <div className="w-full text-center lg:max-w-[10.4375rem] py-8 bg-error-100 rounded-2xl gap-2 flex flex-col justify-center items-center">
+            <h4 className="font-medium text-error-600 text-base">Burn</h4>
+            <span>
+              <h5 className="text-blue-gray-900 font-bold text-lg leading-4">
+                500 HBAR
+              </h5>
+              <span className="text-xs text-blue-gray-600">~$664</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Round = () => {
+  const [showDetails, setShowDetails] = useState(false);
+  const toggleVisibility = (event: MouseEvent<HTMLButtonElement>) => {
+    const rounds_elements = document.querySelectorAll(".round");
+    rounds_elements.forEach((element) => {
+      element.setAttribute("data-state", "closed");
+    });
+    const rootParentElement =
+      event.currentTarget.parentElement?.parentElement?.parentElement;
+    if (rootParentElement) {
+      rootParentElement.setAttribute(
+        "data-state",
+        showDetails ? "closed" : "open"
+      );
+    }
+    setShowDetails(!showDetails);
+  };
+  return (
+    <div className="round group">
+      <div className="flex items-center justify-between *:inline-block text-blue-gray-600 text-base font-medium">
+        <span className="text-blue-gray-500">#1256</span>
+        <span className="text-center">Aug 30, 2025. 1:00 PM</span>
+        <div className="flex items-center space-x-[2.625rem]">
+          <span className="text-right">1</span>
+          <button className="text-blue-500" onClick={toggleVisibility}>
+            <span className="group-data-[state=open]:hidden">Show</span>
+            <span className="group-data-[state=closed]:hidden">Hide</span>
+          </button>
+        </div>
+      </div>
+      <div
+        className={cn(
+          "h-0 overflow-hidden transition-all duration-75 opacity-0 group-data-[state=open]:opacity-100 group-data-[state=open]:mt-6 group-data-[state=open]:h-auto"
+        )}
+      >
+        <div className="bg-blue-500 px-8 py-7 flex items-center justify-between rounded-2xl">
+          <span className="text-base font-medium text-blue-gray-600">
+            Winning numbers
+          </span>
+          <div className="flex gap-6 items-center text-white">
+            <Numbers className="gap-2 *:lg:size-[3.5rem]" />
+            <ViewUserTickets />
+          </div>
+        </div>
+        <RoundDetails />
+      </div>
+    </div>
+  );
+};
 
 interface MatchCardProps {
   label: string;
@@ -64,67 +173,15 @@ const AllHistory = () => {
         <span className="text-base font-medium text-blue-gray-600">
           Winning numbers
         </span>
-        <Numbers className="gap-2" />
+        <Numbers className="gap-2 *:lg:size-[3.5rem]" />
       </div>
-      <div className="flex flex-wrap lg:flex-nowrap gap-[1.4375rem] px-8 py-4">
-        <div className="w-full lg:max-w-[15.25rem] py-4 md:px-4 flex md:items-start gap-[3.375rem] md:pb-[1.6875rem] md:flex-col">
-          <div className="flex items-start space-x-1">
-            <span className="flex items-center justify-center rounded-full bg-blue-gray-100 size-11">
-              <CupIcon />
-            </span>
-            <div className="text-blue-gray-900">
-              <h4 className="text-sm font-semibold mb-1">Prize Pot</h4>
-              <h2 className="font-bold leading-5 text-xl lg:text-2xl">
-                {currencyFormatter(5000)}
-              </h2>
-              <span className="text-blue-gray-600 text-xs font-medium">
-                ~22,678 HBAR
-              </span>
-            </div>
-          </div>
-          <div className="flex items-start space-x-1">
-            <span className="flex items-center justify-center rounded-full bg-blue-gray-100 size-11">
-              <UserIcon />
-            </span>
-            <div className="text-blue-gray-900">
-              <h4 className="text-sm font-semibold mb-1">Total Players</h4>
-              <h2 className="font-bold leading-5 text-xl lg:text-2xl">50</h2>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full">
-          <p className="text-base text-blue-gray-600 mb-[1.4375rem]">
-            Match the winning number in the same order to share prizes. Current
-            prizes up for grabs:
-          </p>
-          <div className="flex flex-wrap lg:flex-nowrap justify-between items-center gap-[1.75rem]">
-            <div className="w-full grid grid-cols-2 gap-y-[1.4375rem] md:grid-cols-3 place-content-between">
-              <MatchCard label="Match first 1" amount={500} />
-              <MatchCard label="Match first 2" amount={500} />
-              <MatchCard label="Match first 3" amount={500} />
-              <MatchCard label="Match first 4" amount={500} />
-              <MatchCard label="Match first 5" amount={500} />
-              <MatchCard label="Match all 6" amount={500} />
-            </div>
-            <div className="w-full text-center lg:max-w-[10.4375rem] py-8 bg-error-100 rounded-2xl gap-2 flex flex-col justify-center items-center">
-              <h4 className="font-medium text-error-600 text-base">Burn</h4>
-              <span>
-                <h5 className="text-blue-gray-900 font-bold text-lg leading-4">
-                  500 HBAR
-                </h5>
-                <span className="text-xs text-blue-gray-600">~$664</span>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <RoundDetails />
     </div>
   );
 };
 
 const UserHistory = () => {
-  const isEmpty = true;
+  const isEmpty = false;
 
   if (isEmpty) {
     return (
@@ -140,7 +197,18 @@ const UserHistory = () => {
     );
   }
   return (
-    <div className="border border-blue-gray-200 rounded-2xl min-h-[24.6875rem]"></div>
+    <div className="border border-blue-gray-200 rounded-2xl min-h-[24.6875rem] px-6 py-4">
+      <div className="flex items-center mb-6 justify-between *:inline-block text-blue-gray-600 text-base font-medium">
+        <span className="">Round</span>
+        <span className="text-center">Date Drawn</span>
+        <span className="text-right">Tickets</span>
+      </div>
+      {/* ROUNDS */}
+      <div className="space-y-6">
+        <Round />
+        <Round />
+      </div>
+    </div>
   );
 };
 
