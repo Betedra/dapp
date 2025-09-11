@@ -1,3 +1,4 @@
+"use client";
 import TicketIcon from "@/components/custom_icons/TicketIcon";
 import PrimaryButton from "@/components/shared/Buttons";
 import {
@@ -7,6 +8,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import useGetBalance from "@/hooks/useGetBalanceAndDecimal";
+import useLottery from "@/hooks/useLottery";
+import { LotteryStatus } from "@/state/lottery/types";
+import useLotteryTransitionStore from "@/store/useLotteryTransitionStore";
+import { ZeroAddress } from "ethers";
 import React, { ReactNode, useState } from "react";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import Ticket from "./Ticket";
@@ -43,6 +49,15 @@ interface Props {
 const BuyTickets = ({ trigger }: Props) => {
   const [isRandomizing, setRandomize] = useState(false);
   const [tickets, setTickets] = useState(1);
+  const { balance } = useGetBalance(ZeroAddress, 18);
+
+  const { currentRound } = useLottery();
+  const { isTransitioning } = useLotteryTransitionStore();
+  const ticketBuyIsDisabled =
+    currentRound?.status !== LotteryStatus.OPEN || isTransitioning;
+
+  console.log({ currentRound });
+
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -78,7 +93,7 @@ const BuyTickets = ({ trigger }: Props) => {
                 </div>
                 <span className="text-blue-gray-500 text-xs">
                   Available HBAR:{" "}
-                  <span className="text-blue-gray-900">205.34</span>
+                  <span className="text-blue-gray-900">{balance}</span>
                 </span>
               </div>
               <div className="bg-blue-gray-25 rounded-lg p-2 gap-1">
@@ -106,12 +121,19 @@ const BuyTickets = ({ trigger }: Props) => {
                 </span>
               </div>
               <span className="space-y-2 block">
-                <PrimaryButton text="Buy now" className="py-2" />
                 <PrimaryButton
-                  text="Randomize your numbers"
-                  className="bg-white white py-2"
-                  onClick={() => setRandomize(true)}
+                  disabled={ticketBuyIsDisabled}
+                  disabledText="Sale ended!"
+                  text="Buy now"
+                  className="py-2"
                 />
+                {!ticketBuyIsDisabled ? (
+                  <PrimaryButton
+                    text="Randomize your numbers"
+                    className="bg-white white py-2"
+                    onClick={() => setRandomize(true)}
+                  />
+                ) : null}
               </span>
               <span className="block rounded-lg p-2 bg-yellow-50 text-xs text-blue-gray-900">
                 &quot;Buy now&quot; selects unique random numbers for your

@@ -11,4 +11,4 @@ export const bigIntToSerializedBigNumber = (bigint: bigint): string =>
   bigIntToBigNumber(bigint).toJSON();
 
 export const bigIntToBigNumber = (bigint: bigint): BigNumber =>
-  new BigNumber(bigint.toString());
+  new BigNumber(bigint?.toString());

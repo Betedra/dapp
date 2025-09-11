@@ -4,14 +4,19 @@ import React from "react";
 
 interface Props {
   className?: string;
+  value?: string;
 }
 
-const Numbers = ({ className }: Props) => {
+const Numbers = ({ className, value }: Props) => {
+  if (!value) return;
+
   return (
     <div className={cn("grid grid-cols-6 gap-[0.35rem]", className)}>
-      {Array(6)
-        .fill("")
-        .map((_, index) => {
+      {value
+        ?.split("")
+        ?.reverse()
+        .map((number, index) => {
+          if (index === value.length - 1) return;
           const randomNumber = Math.floor(Math.random() * 21) - 10;
           return (
             <span
@@ -25,7 +30,7 @@ const Numbers = ({ className }: Props) => {
                 }}
                 className="from-blue-500 via-dodger-blue to-purple-500 bg-gradient-to-b bg-clip-text text-transparent font-bold text-center"
               >
-                {index + 1}
+                {number}
               </span>
             </span>
           );

@@ -11,6 +11,7 @@ interface ButtonProps extends React.ComponentProps<"button"> {
   loadingText?: string;
   loadingClassName?: string;
   target?: string;
+  disabledText?: string;
 }
 
 const PrimaryButton = ({
@@ -22,6 +23,8 @@ const PrimaryButton = ({
   className,
   loadingClassName,
   target = "_self",
+  disabled,
+  disabledText,
   ...props
 }: ButtonProps) => {
   return (
@@ -59,12 +62,13 @@ const PrimaryButton = ({
       ) : (
         <button
           {...props}
+          disabled={disabled}
           className={cn(
             "bg-blue-500 border w-full disabled:opacity-50 border-blue-100 px-5 py-3 font-semibold text-sm lg:text-base max-w-full rounded-[0.625rem] text-blue-900 styled-shadow",
             className
           )}
         >
-          {text}
+          {disabled ? (disabledText ? disabledText : text) : text}
         </button>
       )}
     </>
