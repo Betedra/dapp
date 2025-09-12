@@ -8,43 +8,12 @@ import useNextEventCountdown from "@/hooks/useNextEventCountdown";
 import { LotteryStatus } from "@/state/lottery/types";
 import useLotteryTransitionStore from "@/store/useLotteryTransitionStore";
 import { currencyFormatter, formatDate } from "@/utils";
-import { BIG_ZERO } from "@/utils/bigNumber";
 import getTimePeriods from "@/utils/getTimePeriods";
-import BigNumber from "bignumber.js";
 import Image from "next/image";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import BuyTickets from "./BuyTickets";
+import RewardBrackets from "./RewardBrackets";
 import ViewUserTickets from "./ViewUserTickets";
-
-interface MatchCardProps {
-  amount: number;
-  rewardBracket: number;
-}
-
-const MatchCard = ({ rewardBracket, amount }: MatchCardProps) => {
-  const wHbarPrice = useHBarPrice();
-  const amountInUsd = useMemo(() => {
-    if (amount && wHbarPrice) {
-      return wHbarPrice * amount;
-    }
-    return 0;
-  }, [wHbarPrice, amount]);
-  return (
-    <div className="w-fit">
-      <h5 className="mb-1 text-base font-medium text-transparent bg-clip-text bg-gradient-to-b from-blue-500 via-dodger-blue to-purple-500">
-        Match {rewardBracket < 6 ? "first" : "all"} {rewardBracket}
-      </h5>
-      <span>
-        <h5 className="text-lg font-bold leading-4 text-blue-gray-900">
-          {amount} HBAR
-        </h5>
-        <span className="text-xs text-blue-gray-600">
-          ~{currencyFormatter(amountInUsd)}
-        </span>
-      </span>
-    </div>
-  );
-};
 
 export const getNextDrawId = (status: string, currentLotteryId: string) => {
   if (status === LotteryStatus.OPEN) {
@@ -72,8 +41,6 @@ interface CountdownProps {
   endTime: string;
 }
 
-const rewardBrackets = [0, 1, 2, 3, 4, 5];
-
 const Countdown = ({
   nextEventTime,
   preCountdownText,
@@ -82,7 +49,9 @@ const Countdown = ({
   endTime,
 }: CountdownProps) => {
   const secondsRemaining = useNextEventCountdown(nextEventTime);
-  const { hours, minutes } = getTimePeriods(secondsRemaining ?? 0);
+  const { hours, minutes } = getTimePeriods(
+    secondsRemaining && secondsRemaining > 0 ? secondsRemaining : 0
+  );
 
   const endTimeMs = parseInt(endTime, 10) * 1000;
   const endDate = new Date(endTimeMs);
@@ -120,8 +89,6 @@ const OngoingLottery = () => {
   const ticketBuyIsDisabled =
     currentRound?.status !== LotteryStatus.OPEN || isTransitioning;
 
-  // console.log(currentRound);
-
   useEffect(() => {
     if (isTransitioning) {
       refetchLotteryData();
@@ -134,18 +101,6 @@ const OngoingLottery = () => {
     : 0;
   const { nextEventTime, postCountdownText, preCountdownText } =
     useGetNextLotteryEvent(endTimeAsInt, currentRound?.status);
-
-  const getHBarRewards = (bracket: number) => {
-    if (!currentRound?.rewardsBreakdown) return BIG_ZERO;
-
-    const shareAsPercentage = new BigNumber(
-      currentRound?.rewardsBreakdown[bracket]
-    ).div(100);
-    const result = new BigNumber(currentRound?.treasuryFee)
-      .div(100)
-      .times(shareAsPercentage);
-    return result.toString();
-  };
 
   return (
     <section className="mb-[2.625rem] px-4 xl:px-0">
@@ -260,26 +215,7 @@ const OngoingLottery = () => {
                 Match the winning number in the same order to share prizes.
                 Current prizes up for grabs:
               </p>
-              <div className="flex flex-wrap lg:flex-nowrap justify-between gap-[1.75rem]">
-                <div className="w-full grid grid-cols-2 gap-y-[1.4375rem] md:grid-cols-3 place-content-between">
-                  {rewardBrackets.map((bracketIndex) => (
-                    <MatchCard
-                      key={bracketIndex}
-                      rewardBracket={bracketIndex + 1}
-                      amount={Number(getHBarRewards(bracketIndex)) || 0}
-                    />
-                  ))}
-                </div>
-                {/* <div className="w-full text-center lg:max-w-[10.4375rem] py-8 bg-error-100 rounded-2xl gap-2 flex flex-col justify-center items-center">
-                <h4 className="text-base font-medium text-error-600">Burn</h4>
-                <span>
-                  <h5 className="text-lg font-bold leading-4 text-blue-gray-900">
-                    500 HBAR
-                  </h5>
-                  <span className="text-xs text-blue-gray-600">~$664</span>
-                </span>
-              </div> */}
-              </div>
+              <RewardBrackets round={currentRound} />
             </div>
           ) : (
             <div className="px-8 py-4">
