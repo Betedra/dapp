@@ -25,14 +25,18 @@ const useGetUnclaimedRewards = () => {
   }, [account, isTransitioning]);
 
   const fetchAllRewards = async () => {
-    if (!account || lotteries.length === 0) return;
+    if (!account) return;
+    if (lotteries.length === 0) {
+      setFetchStatus(FetchStatus.Fetched);
+      return;
+    }
     setFetchStatus(FetchStatus.Fetching);
     const unclaimedRewardsResponse = await fetchUnclaimedUserRewards(lotteries);
     setUnclaimedRewards(unclaimedRewardsResponse);
     setFetchStatus(FetchStatus.Fetched);
   };
 
-  return { fetchAllRewards, unclaimedRewards, fetchStatus };
+  return { currentLotteryId, fetchAllRewards, unclaimedRewards, fetchStatus };
 };
 
 export default useGetUnclaimedRewards;

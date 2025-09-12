@@ -14,7 +14,7 @@ const CheckStatus = () => {
   const { isConnected, address: account } = useAccount();
   const [hasCheckedForRewards, setHasCheckedForRewards] = useState(false);
   const [hasRewardsToClaim, setHasRewardsToClaim] = useState(false);
-  const { fetchAllRewards, unclaimedRewards, fetchStatus } =
+  const { fetchAllRewards, unclaimedRewards, fetchStatus, currentLotteryId } =
     useGetUnclaimedRewards();
   const isFetchingRewards = fetchStatus === FetchStatus.Fetching;
 
@@ -110,8 +110,8 @@ const CheckStatus = () => {
               onClick={fetchAllRewards}
               text="Check now"
               className="max-w-[12.125rem]"
-              disabled={isFetchingRewards}
-              disabledText="Checking..."
+              disabled={isFetchingRewards || !currentLotteryId}
+              disabledText={currentLotteryId ? "Checking..." : ""}
             />
           )
         ) : (
