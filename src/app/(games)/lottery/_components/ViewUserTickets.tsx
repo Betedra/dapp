@@ -12,8 +12,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { LotteryTicket } from "@/state/lottery/types";
-import React from "react";
+import { getWinningTickets } from "@/state/lottery/fetchUnclaimedUserRewards";
+import { LotteryTicket, LotteryTicketClaimData } from "@/state/lottery/types";
+import React, { useEffect, useState } from "react";
 import BuyTickets from "./BuyTickets";
 import Numbers from "./Numbers";
 
@@ -36,8 +37,15 @@ interface Props {
   tickets: LotteryTicket[];
   lotteryId: string;
   isPastRoundView?: boolean;
-  winningNumbers?: string[];
+  winningNumbers?: string;
 }
+
+type UserWinningTicket = {
+  allWinningTickets?: LotteryTicket[] | null;
+  ticketsWithUnclaimedRewards?: LotteryTicket[] | null;
+  isFetched: boolean;
+  claimData: LotteryTicketClaimData | null;
+};
 
 const ViewUserTickets = ({
   tickets,
@@ -45,6 +53,36 @@ const ViewUserTickets = ({
   isPastRoundView = false,
   winningNumbers,
 }: Props) => {
+  const [userWinningTickets, setUserWinningTickets] =
+    useState<UserWinningTicket>({
+      allWinningTickets: null,
+      ticketsWithUnclaimedRewards: null,
+      isFetched: false,
+      claimData: null,
+    });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!isPastRoundView || !lotteryId || !winningNumbers) return;
+
+      const winningTickets = await getWinningTickets({
+        roundId: lotteryId,
+        userTickets: tickets,
+        finalNumber: winningNumbers,
+      });
+
+      setUserWinningTickets({
+        isFetched: true,
+        allWinningTickets: winningTickets?.allWinningTickets,
+        ticketsWithUnclaimedRewards:
+          winningTickets?.ticketsWithUnclaimedRewards,
+        claimData: winningTickets,
+      });
+    };
+
+    fetchData();
+  }, [lotteryId, isPastRoundView, winningNumbers, tickets]);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -52,7 +90,7 @@ const ViewUserTickets = ({
           View your tickets
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[20.4375rem] w-full bg-white rounded-2xl py-8 px-4 text-mine-shaft">
+      <DialogContent className="sm:max-w-[20.4375rem] w-full bg-white rounded-2xl py-8 px-4 text-mine-shaft max-h-dvh overflow-auto">
         <DialogHeader>
           <DialogTitle className="sr-only">My Tickets</DialogTitle>
         </DialogHeader>
@@ -66,11 +104,7 @@ const ViewUserTickets = ({
           {isPastRoundView && winningNumbers ? (
             <div className="p-2 rounded-lg space-y-1.5 lottery-gradient">
               <h6 className="text-xs text-blue-gray-25">Winning numbers</h6>
-              <div>
-                {winningNumbers.map((numbers, index) => (
-                  <Numbers key={index} value={numbers} />
-                ))}
-              </div>
+              <Numbers value={winningNumbers} />
             </div>
           ) : null}
           {tickets.map((ticket) => (
@@ -89,11 +123,22 @@ const ViewUserTickets = ({
                     {tickets.length}
                   </span>
                 </span>
-                {winningNumbers ? (
+                {userWinningTickets?.allWinningTickets ? (
                   <span className="flex items-center justify-between text-sm">
-                    <span className="text-blue-gray-500">Winning ticket</span>
+                    <span className="text-blue-gray-500">Winning tickets</span>
                     <span className="font-medium text-blue-gray-900">
-                      {winningNumbers.length}
+                      {userWinningTickets?.allWinningTickets?.length}
+                    </span>
+                  </span>
+                ) : null}
+                {userWinningTickets?.ticketsWithUnclaimedRewards &&
+                userWinningTickets?.ticketsWithUnclaimedRewards.length > 0 ? (
+                  <span className="flex items-center justify-between text-sm">
+                    <span className="text-blue-gray-500">
+                      Tickets with unclaimed rewards
+                    </span>
+                    <span className="font-medium text-blue-gray-900">
+                      {userWinningTickets?.ticketsWithUnclaimedRewards?.length}
                     </span>
                   </span>
                 ) : null}

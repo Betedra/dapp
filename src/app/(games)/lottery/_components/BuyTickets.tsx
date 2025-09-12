@@ -300,7 +300,13 @@ const BuyTickets = ({ trigger }: Props) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={(value) => setOpen(value)}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogTrigger asChild disabled={!currentLotteryId}>
+        {!currentLotteryId ? (
+          <PrimaryButton disabled text="On sale soon!" className="w-fit" />
+        ) : (
+          trigger
+        )}
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[20.4375rem] w-full bg-white rounded-2xl py-8 px-4 text-mine-shaft overflow-auto max-h-dvh">
         <DialogHeader>
           <DialogTitle className="sr-only">Buy Tickets</DialogTitle>

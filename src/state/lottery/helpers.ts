@@ -45,11 +45,11 @@ export const processViewLotterySuccessResponse = (
       Number(bigIntToSerializedBigNumber(priceTicketInWHbar)) / 1e8
     ).toString(),
     discountDivisor: discountDivisor?.toString(),
-    treasuryFee: (Number(treasuryFee?.toString()) / 1000).toString(),
+    treasuryFee: (Number(treasuryFee?.toString()) / 100).toString(),
     firstTicketId: firstTicketId?.toString(),
     amountCollectedInWHbar: (
       Number(bigIntToSerializedBigNumber(amountCollectedInWHbar)) / 1e8
-    ).toString(),
+    ).toFixed(2),
     finalNumber: finalNumber?.toString(),
     hbarPerBracket: serializedHbarPerBracket,
     countWinnersPerBracket: serializedCountWinnersPerBracket,

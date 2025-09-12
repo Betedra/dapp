@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/",
-        destination: "/prediction",
+        destination: "/lottery",
         permanent: false,
       },
     ];
