@@ -65,8 +65,8 @@ export interface Bet {
   claimedAt: number;
   claimedBlock: number;
   claimedHash: string;
-  claimedEDU: number;
-  claimedNetEDU: number;
+  claimedHBAR: number;
+  claimedNetHBAR: number;
   createdAt: number;
   updatedAt: number;
   user?: PredictionUser;
@@ -81,14 +81,14 @@ export interface PredictionUser {
   totalBets: number;
   totalBetsBull: number;
   totalBetsBear: number;
-  totalEDU: number;
-  totalEDUBull: number;
-  totalEDUBear: number;
+  totalHBAR: number;
+  totalHBARBull: number;
+  totalHBARBear: number;
   totalBetsClaimed: number;
-  totalEDUClaimed: number;
+  totalHBARClaimed: number;
   winRate: number;
-  averageEDU: number;
-  netEDU: number;
+  averageHBAR: number;
+  netHBAR: number;
   bets?: Bet[];
 }
 

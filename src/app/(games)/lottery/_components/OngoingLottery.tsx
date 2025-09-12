@@ -1,33 +1,150 @@
 "use client";
 import PrimaryButton from "@/components/shared/Buttons";
-import { currencyFormatter } from "@/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+import useGetNextLotteryEvent from "@/hooks/useGetNextLotteryEvent";
+import useHBarPrice from "@/hooks/useHBarPrice";
+import useLottery from "@/hooks/useLottery";
+import useNextEventCountdown from "@/hooks/useNextEventCountdown";
+import { LotteryStatus } from "@/state/lottery/types";
+import useLotteryTransitionStore from "@/store/useLotteryTransitionStore";
+import { currencyFormatter, formatDate } from "@/utils";
+import { BIG_ZERO } from "@/utils/bigNumber";
+import getTimePeriods from "@/utils/getTimePeriods";
+import BigNumber from "bignumber.js";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import BuyTickets from "./BuyTickets";
 import ViewUserTickets from "./ViewUserTickets";
 
 interface MatchCardProps {
-  label: string;
   amount: number;
+  rewardBracket: number;
 }
 
-const MatchCard = ({ label, amount }: MatchCardProps) => {
+const MatchCard = ({ rewardBracket, amount }: MatchCardProps) => {
+  const wHbarPrice = useHBarPrice();
+  const amountInUsd = useMemo(() => {
+    if (amount && wHbarPrice) {
+      return wHbarPrice * amount;
+    }
+    return 0;
+  }, [wHbarPrice, amount]);
   return (
     <div className="w-fit">
       <h5 className="text-base font-medium text-transparent mb-1 bg-clip-text bg-gradient-to-b from-blue-500 via-dodger-blue to-purple-500">
-        {label}
+        Match {rewardBracket < 6 ? "first" : "all"} {rewardBracket}
       </h5>
       <span>
         <h5 className="text-blue-gray-900 font-bold text-lg leading-4">
           {amount} HBAR
         </h5>
-        <span className="text-xs text-blue-gray-600">~$664</span>
+        <span className="text-xs text-blue-gray-600">
+          ~{currencyFormatter(amountInUsd)}
+        </span>
+      </span>
+    </div>
+  );
+};
+
+export const getNextDrawId = (status: string, currentLotteryId: string) => {
+  if (status === LotteryStatus.OPEN) {
+    return `${currentLotteryId}`;
+  }
+  if (status === LotteryStatus.PENDING) {
+    return "";
+  }
+  return parseInt(currentLotteryId, 10) + 1;
+};
+
+export const getNextDrawDateTime = (status: string, endDate: Date) => {
+  if (status === LotteryStatus.OPEN) {
+    return formatDate(endDate);
+  }
+  return "";
+};
+
+interface CountdownProps {
+  nextEventTime: number;
+  preCountdownText?: string;
+  postCountdownText?: string;
+  currentLotteryId: string;
+  status: string;
+  endTime: string;
+}
+
+const rewardBrackets = [0, 1, 2, 3, 4, 5];
+
+const Countdown = ({
+  nextEventTime,
+  preCountdownText,
+  status,
+  currentLotteryId,
+  endTime,
+}: CountdownProps) => {
+  const secondsRemaining = useNextEventCountdown(nextEventTime);
+  const { hours, minutes } = getTimePeriods(secondsRemaining ?? 0);
+
+  const endTimeMs = parseInt(endTime, 10) * 1000;
+  const endDate = new Date(endTimeMs);
+
+  return (
+    <div className="text-blue-gray-900">
+      <h4 className="text-base font-semibold">{preCountdownText}</h4>
+      <h2 className="font-bold text-2xl md:text-3xl lg:text-4xl">
+        {hours}
+        <span className="lg:text-lg">h</span> {minutes}
+        <span className="lg:text-lg">m</span>
+      </h2>
+      <span className="text-blue-gray-600 text-sm block mb-1 font-medium">
+        {Boolean(endTime) && getNextDrawDateTime(status, endDate)}
+      </span>
+      <span className="text-blue-gray-500 text-xs block font-medium">
+        Round{" "}
+        {currentLotteryId && `#${getNextDrawId(status, currentLotteryId)}`}
       </span>
     </div>
   );
 };
 
 const OngoingLottery = () => {
+  const {
+    currentRound,
+    currentLotteryId,
+    refetch,
+    refetchLotteryData,
+    userTickets,
+  } = useLottery();
+  const { isTransitioning } = useLotteryTransitionStore();
+  const wHbarPrice = useHBarPrice();
+  const prizeTotal = Number(currentRound?.amountCollectedInWHbar) * wHbarPrice;
+  const ticketBuyIsDisabled =
+    currentRound?.status !== LotteryStatus.OPEN || isTransitioning;
+
+  useEffect(() => {
+    if (isTransitioning) {
+      refetchLotteryData();
+      refetch();
+    }
+  }, [isTransitioning, refetch, refetchLotteryData]);
+
+  const endTimeAsInt = currentRound?.endTime
+    ? parseInt(currentRound?.endTime, 10)
+    : 0;
+  const { nextEventTime, postCountdownText, preCountdownText } =
+    useGetNextLotteryEvent(endTimeAsInt, currentRound?.status);
+
+  const getHBarRewards = (bracket: number) => {
+    if (!currentRound?.rewardsBreakdown) return BIG_ZERO;
+
+    const shareAsPercentage = new BigNumber(
+      currentRound?.rewardsBreakdown[bracket]
+    ).div(100);
+    const result = new BigNumber(currentRound?.treasuryFee)
+      .div(100)
+      .times(shareAsPercentage);
+    return result.toString();
+  };
+
   return (
     <section className="mb-[2.625rem] px-4 xl:px-0">
       <div className="mx-auto max-w-[83.5625rem] overflow-hidden mb-[3.4375rem] isolate rounded-2xl flex justify-center items-center relative lottery-gradient min-h-[23rem]">
@@ -53,17 +170,23 @@ const OngoingLottery = () => {
             height={150}
           />
           <span className="block text-base font-semibold mb-[0.3125rem]">
-            The Betedra Lottery of
+            The Betedra Lottery {currentRound ? "of" : null}
           </span>
-          <h2 className="font-bold text-2xl md:text-3xl lg:text-5xl mb-[0.3125rem]">
-            {currencyFormatter(5000)}
-          </h2>
-          <span className="block text-base font-semibold mb-8">in prizes</span>
+          {currentRound ? (
+            <>
+              <h2 className="font-bold text-2xl md:text-3xl lg:text-5xl mb-[0.3125rem]">
+                {currencyFormatter(prizeTotal)}
+              </h2>
+              <span className="block text-base font-semibold">in prizes</span>
+            </>
+          ) : null}
           <BuyTickets
             trigger={
               <PrimaryButton
                 text="Buy tickets"
-                className="max-w-[10.4375rem] mx-auto"
+                className="max-w-[10.4375rem] mx-auto mt-8"
+                disabled={ticketBuyIsDisabled || !currentRound}
+                disabledText="On sale soon!"
               />
             }
           />
@@ -71,28 +194,32 @@ const OngoingLottery = () => {
       </div>
       <div className="flex flex-wrap lg:flex-nowrap gap-5 mx-auto max-w-[75.125rem]">
         <div className="w-full lg:max-w-[15.25rem] px-6 py-10 border text-center flex items-center justify-between space-y-[3.375rem] flex-col border-blue-gray-200 rounded-2xl">
-          <div className="text-blue-gray-900">
-            <h4 className="text-base font-semibold">Next draw starts in</h4>
-            <h2 className="font-bold text-2xl md:text-3xl lg:text-4xl">
-              5<span className="lg:text-lg">h</span> 20
-              <span className="lg:text-lg">m</span>
-            </h2>
-            <span className="text-blue-gray-600 text-sm block mb-1 font-medium">
-              {new Date().toLocaleString()}
-            </span>
-            <span className="text-blue-gray-500 text-xs block font-medium">
-              Round #1256
-            </span>
-          </div>
-          <div className="text-blue-gray-900">
-            <h4 className="text-base font-semibold mb-1">Prize Pot</h4>
-            <h2 className="font-bold text-2xl lg:text-[2rem]">
-              {currencyFormatter(5000)}
-            </h2>
-            <span className="text-blue-gray-600 text-base font-medium">
-              ~22,678 HBAR
-            </span>
-          </div>
+          {nextEventTime && (postCountdownText || preCountdownText) ? (
+            <Countdown
+              nextEventTime={nextEventTime}
+              postCountdownText={postCountdownText}
+              preCountdownText={preCountdownText}
+              currentLotteryId={currentLotteryId?.toString() || ""}
+              status={currentRound?.status || ""}
+              endTime={currentRound?.endTime || ""}
+            />
+          ) : (
+            <Skeleton className="w-32 h-16" />
+          )}
+          {prizeTotal ? (
+            <div className="text-blue-gray-900">
+              <h4 className="text-base font-semibold mb-1">Prize Pot</h4>
+              <h2 className="font-bold text-2xl lg:text-[2rem]">
+                {currencyFormatter(prizeTotal)}
+              </h2>
+              <span className="text-blue-gray-600 text-base font-medium">
+                ~{Number(currentRound?.amountCollectedInWHbar).toLocaleString()}{" "}
+                HBAR
+              </span>
+            </div>
+          ) : (
+            <Skeleton className="w-32 h-16" />
+          )}
         </div>
         <div className="w-full border border-blue-gray-200 rounded-2xl overflow-hidden">
           <div className="bg-blue-gray-100 p-4 md:px-8 md:py-2.5 flex space-y-3 md:space-y-0 md:items-center flex-col md:flex-row justify-between">
@@ -102,37 +229,43 @@ const OngoingLottery = () => {
             <span className="font-medium text-base text-blue-gray-600">
               You have{" "}
               <span className="text-blue-gray-900 font-bold inline-block">
-                0
+                {userTickets?.length}
               </span>{" "}
               tickets in this round
             </span>
             <span className="flex items-center space-x-[1.125rem] text-blue-600">
-              <ViewUserTickets />
+              {userTickets.length > 0 ? (
+                <ViewUserTickets lotteryId={currentLotteryId?.toString() || ""} tickets={userTickets} />
+              ) : null}
               <BuyTickets
                 trigger={
                   <PrimaryButton
                     text="Buy tickets"
-                    className="max-w-[7.1875rem] whitespace-nowrap"
+                    className="w-fit whitespace-nowrap"
+                    disabled={ticketBuyIsDisabled || !currentRound}
+                    disabledText="On sale soon!"
                   />
                 }
               />
             </span>
           </div>
-          <div className="px-8 py-4">
-            <p className="text-base text-blue-gray-600 mb-[1.4375rem]">
-              Match the winning number in the same order to share prizes.
-              Current prizes up for grabs:
-            </p>
-            <div className="flex flex-wrap lg:flex-nowrap justify-between gap-[1.75rem]">
-              <div className="w-full grid grid-cols-2 gap-y-[1.4375rem] md:grid-cols-3 place-content-between">
-                <MatchCard label="Match first 1" amount={500} />
-                <MatchCard label="Match first 2" amount={500} />
-                <MatchCard label="Match first 3" amount={500} />
-                <MatchCard label="Match first 4" amount={500} />
-                <MatchCard label="Match first 5" amount={500} />
-                <MatchCard label="Match all 6" amount={500} />
-              </div>
-              <div className="w-full text-center lg:max-w-[10.4375rem] py-8 bg-error-100 rounded-2xl gap-2 flex flex-col justify-center items-center">
+          {currentRound ? (
+            <div className="px-8 py-4">
+              <p className="text-base text-blue-gray-600 mb-[1.4375rem]">
+                Match the winning number in the same order to share prizes.
+                Current prizes up for grabs:
+              </p>
+              <div className="flex flex-wrap lg:flex-nowrap justify-between gap-[1.75rem]">
+                <div className="w-full grid grid-cols-2 gap-y-[1.4375rem] md:grid-cols-3 place-content-between">
+                  {rewardBrackets.map((bracketIndex) => (
+                    <MatchCard
+                      key={bracketIndex}
+                      rewardBracket={bracketIndex + 1}
+                      amount={Number(getHBarRewards(bracketIndex)) || 0}
+                    />
+                  ))}
+                </div>
+                {/* <div className="w-full text-center lg:max-w-[10.4375rem] py-8 bg-error-100 rounded-2xl gap-2 flex flex-col justify-center items-center">
                 <h4 className="font-medium text-error-600 text-base">Burn</h4>
                 <span>
                   <h5 className="text-blue-gray-900 font-bold text-lg leading-4">
@@ -140,9 +273,14 @@ const OngoingLottery = () => {
                   </h5>
                   <span className="text-xs text-blue-gray-600">~$664</span>
                 </span>
+              </div> */}
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="px-8 py-4">
+              <Skeleton className="w-full h-40" />
+            </div>
+          )}
         </div>
       </div>
     </section>

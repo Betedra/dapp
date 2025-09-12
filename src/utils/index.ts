@@ -44,6 +44,19 @@ export const formatBigIntToFixedNumber = (value: string) => {
   return price;
 };
 
+export const formatDate = (date: Date) => {
+  const options: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  };
+
+  return date.toLocaleString("en-US", options);
+};
+
 export function formatNumber(
   number: number,
   minimumFractionDigits: number = 2

@@ -18,7 +18,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`antialiased ${grift.className}`}>{children}</body>
+      <body
+        suppressHydrationWarning
+        className={`antialiased ${grift.className}`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

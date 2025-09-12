@@ -35,10 +35,10 @@ const initialPnlSummary: PnlSummary = {
   won: {
     rounds: 0,
     amount: 0,
-    payout: 0, // net payout after all deductions
+    payout: 0, // net payout after all dHBARctions
     bestRound: {
       id: "0",
-      payout: 0, // net payout after all deductions
+      payout: 0, // net payout after all dHBARctions
       multiplier: 0,
     },
   },
@@ -105,16 +105,16 @@ const PNLHistoryTab = ({ bets, currentEpoch }: PnlTabProps) => {
   const netResultAmount = summary.won.payout - summary.lost.amount;
   const netResultIsPositive = netResultAmount > 0;
   const avgPositionEntered = summary.entered.amount / summary.entered.rounds;
-  const avgEDUWonPerRound = netResultAmount / summary.entered.rounds;
-  const avgEDUWonIsPositive = avgEDUWonPerRound > 0;
+  const avgHBARWonPerRound = netResultAmount / summary.entered.rounds;
+  const avgHBARWonIsPositive = avgHBARWonPerRound > 0;
 
   // Guard in case user has only lost rounds
   const hasBestRound = summary.won.bestRound.payout !== 0;
 
   const netResultInUsd = tokenPrice.times(netResultAmount).toNumber();
-  const avgEDUWonInUsd = tokenPrice.times(avgEDUWonPerRound).toNumber();
-  const avgEDUWonInUsdDisplay = !Number.isNaN(avgEDUWonInUsd)
-    ? `~${avgEDUWonInUsd.toFixed(2)}`
+  const avgHBARWonInUsd = tokenPrice.times(avgHBARWonPerRound).toNumber();
+  const avgHBARWonInUsdDisplay = !Number.isNaN(avgHBARWonInUsd)
+    ? `~${avgHBARWonInUsd.toFixed(2)}`
     : "~$0.00";
   const betRoundInUsd = tokenPrice
     .times(summary.won.bestRound.payout)
@@ -162,17 +162,17 @@ const PNLHistoryTab = ({ bets, currentEpoch }: PnlTabProps) => {
               className={cn(
                 "text-sm font-medium lg:text-base text-success-500",
                 {
-                  "text-error-400": !avgEDUWonIsPositive,
+                  "text-error-400": !avgHBARWonIsPositive,
                 }
               )}
             >
-              {`${avgEDUWonIsPositive ? "+" : ""}${formatHBAR(
-                avgEDUWonPerRound,
+              {`${avgHBARWonIsPositive ? "+" : ""}${formatHBAR(
+                avgHBARWonPerRound,
                 3
               )} HBAR`}
             </p>
             <p className="text-xs text-blue-gray-500">
-              {avgEDUWonInUsdDisplay}
+              {avgHBARWonInUsdDisplay}
             </p>
           </span>
         </div>
