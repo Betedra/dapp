@@ -17,13 +17,13 @@ export interface LotteryTicket {
   status: boolean;
   rewardBracket?: number;
   roundId?: string;
-  cakeReward?: string;
+  hbarReward?: string;
 }
 
 export interface LotteryTicketClaimData {
   ticketsWithUnclaimedRewards: LotteryTicket[];
   allWinningTickets: LotteryTicket[];
-  cakeTotal: BigNumber;
+  hbarTotal: BigNumber;
   roundId: string;
 }
 
@@ -97,4 +97,9 @@ export interface UserRound {
   endTime: string;
   totalTickets: string;
   tickets?: LotteryTicket[];
+}
+
+export interface UserRoundProps {
+  userTickets: LotteryTicket[];
+  round: LotteryResponse;
 }

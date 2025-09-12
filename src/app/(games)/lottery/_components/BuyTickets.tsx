@@ -1,6 +1,8 @@
 "use client";
+import { addLotteryRound } from "@/app/actions/lottery";
 import TicketIcon from "@/components/custom_icons/TicketIcon";
 import PrimaryButton from "@/components/shared/Buttons";
+import { ConnectWallet } from "@/components/shared/ConnectWallet";
 import {
   Dialog,
   DialogContent,
@@ -10,34 +12,80 @@ import {
 } from "@/components/ui/dialog";
 import useGetBalance from "@/hooks/useGetBalanceAndDecimal";
 import useLottery from "@/hooks/useLottery";
+import LotteryABI from "@/smart-contract/abi/lottery";
+import { CONTRACT_ADDRESS } from "@/state/lottery/constants";
 import { LotteryStatus } from "@/state/lottery/types";
 import useLotteryTransitionStore from "@/store/useLotteryTransitionStore";
-import { ZeroAddress } from "ethers";
-import React, { ReactNode, useState } from "react";
+import { TicketProps, useTicketsStore } from "@/store/useTicketStore";
+import BigNumber from "bignumber.js";
+import { parseEther, ZeroAddress } from "ethers";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { MdKeyboardArrowLeft } from "react-icons/md";
+import { toast } from "sonner";
+import { useAccount, useWriteContract } from "wagmi";
 import Ticket from "./Ticket";
 
-const RandomizeTickets = ({ goBack }: { goBack: () => void }) => {
+interface RandomizeTicketsProps {
+  totalCost: string;
+  randomize: () => void;
+  tickets: TicketProps[];
+  allComplete: boolean;
+  goBack: () => void;
+  confirmHandler: () => void;
+  isConfirming: boolean;
+}
+
+const RandomizeTickets = ({
+  totalCost,
+  tickets,
+  randomize,
+  goBack,
+  isConfirming,
+  confirmHandler,
+}: RandomizeTicketsProps) => {
   return (
     <div className="space-y-[1.125rem]">
       <span className="flex items-center space-x-2.5">
         <MdKeyboardArrowLeft size={20} role="button" onClick={goBack} />
-        <h3 className="font-semibold text-base text-center w-full">
+        <h3 className="w-full text-base font-semibold text-center">
           Randomize your numbers
         </h3>
       </span>
-      <Ticket index={1} cost={5} showTotal />
-      <Ticket index={2} />
+      {tickets.map((ticket, index) => (
+        <Ticket
+          key={ticket.id}
+          ticket={ticket}
+          showTotal={index == 0}
+          cost={Number(totalCost)?.toFixed(2)}
+          duplicateWith={ticket.duplicateWith}
+        />
+      ))}
+      {/* <Ticket index={1} cost={5} showTotal />
+      <Ticket index={2} /> */}
       <PrimaryButton
         text="Randomize your numbers"
-        className="bg-white white py-2"
+        className="py-2 bg-white white"
+        onClick={randomize}
+        disabled={isConfirming}
       />
-      <span className="block rounded-lg p-2 bg-yellow-50 text-xs text-blue-gray-900">
+      <span className="block p-2 text-xs rounded-lg bg-yellow-50 text-blue-gray-900">
         Your numbers are chosen randomly, ensuring there are no duplicates. Just
         tap on a number if you&apos;d like to make any changes or click on the
         button.
       </span>
-      <PrimaryButton text="Confirm and buy" className="py-2" />
+      <PrimaryButton
+        text="Confirm and buy"
+        className="py-2"
+        disabled={isConfirming}
+        onClick={confirmHandler}
+        disabledText={isConfirming ? "Confirming..." : ""}
+      />
     </div>
   );
 };
@@ -46,96 +94,298 @@ interface Props {
   trigger: ReactNode;
 }
 
-const BuyTickets = ({ trigger }: Props) => {
-  const [isRandomizing, setRandomize] = useState(false);
-  const [tickets, setTickets] = useState(1);
-  const { balance } = useGetBalance(ZeroAddress, 18);
+enum BuyingStage {
+  BUY = "Buy",
+  EDIT = "Edit",
+}
 
-  const { currentRound } = useLottery();
+const BuyTickets = ({ trigger }: Props) => {
+  const [isOpen, setOpen] = useState(false);
+  const { isPending, writeContractAsync } = useWriteContract();
+  const { isConnected, address: account } = useAccount();
+  const {
+    currentRound,
+    maxNumberTicketsPerBuyOrClaim,
+    currentLotteryId,
+    userTickets,
+  } = useLottery();
   const { isTransitioning } = useLotteryTransitionStore();
   const ticketBuyIsDisabled =
     currentRound?.status !== LotteryStatus.OPEN || isTransitioning;
+  const [ticketsToBuy, setTicketsToBuy] = useState("");
+  const { balance } = useGetBalance(ZeroAddress, 18);
+  const userHbar = useMemo(() => new BigNumber(balance || 0), [balance]);
+  const priceTicketInHbar = useMemo(
+    () => new BigNumber(currentRound?.priceTicketInWHbar || 0),
+    [currentRound]
+  );
+  const discountDivisor = useMemo(
+    () => new BigNumber(currentRound?.discountDivisor || 0),
+    [currentRound]
+  );
 
-  console.log({ currentRound });
+  const [discountValue, setDiscountValue] = useState("");
+  const [totalCost, setTotalCost] = useState("");
+  const [ticketCostBeforeDiscount, setTicketCostBeforeDiscount] = useState("");
+  const [buyingStage, setBuyingStage] = useState<BuyingStage>(BuyingStage.BUY);
+  const [maxTicketPurchaseExceeded, setMaxTicketPurchaseExceeded] =
+    useState(false);
+  const [userNotEnoughHbar, setUserNotEnoughHbar] = useState(false);
+
+  const { randomize, tickets, allComplete, getTicketsForPurchase, reset } =
+    useTicketsStore();
+
+  const limitNumberByMaxTicketsPerBuy = useCallback(
+    (number: BigNumber) => {
+      return number.gt(maxNumberTicketsPerBuyOrClaim)
+        ? maxNumberTicketsPerBuyOrClaim
+        : number;
+    },
+    [maxNumberTicketsPerBuyOrClaim]
+  );
+
+  const getTicketCostAfterDiscount = useCallback(
+    (numberTickets: BigNumber) => {
+      const totalAfterDiscount = priceTicketInHbar
+        .times(numberTickets)
+        .times(discountDivisor.plus(1).minus(numberTickets))
+        .div(discountDivisor);
+      return totalAfterDiscount;
+    },
+    [discountDivisor, priceTicketInHbar]
+  );
+
+  const validateInput = useCallback(
+    (inputNumber: BigNumber) => {
+      const limitedNumberTickets = limitNumberByMaxTicketsPerBuy(inputNumber);
+      const hbarCostAfterDiscount =
+        getTicketCostAfterDiscount(limitedNumberTickets);
+
+      if (hbarCostAfterDiscount.gt(userHbar)) {
+        setUserNotEnoughHbar(true);
+      } else if (limitedNumberTickets.eq(maxNumberTicketsPerBuyOrClaim)) {
+        setMaxTicketPurchaseExceeded(true);
+      } else {
+        setUserNotEnoughHbar(false);
+        setMaxTicketPurchaseExceeded(false);
+      }
+    },
+    [
+      limitNumberByMaxTicketsPerBuy,
+      getTicketCostAfterDiscount,
+      maxNumberTicketsPerBuyOrClaim,
+      userHbar,
+    ]
+  );
+
+  const handleInputChange = (input: string) => {
+    // Force input to integer
+    const inputAsInt = parseInt(input, 10);
+    const inputAsBN = new BigNumber(inputAsInt);
+    const limitedNumberTickets = limitNumberByMaxTicketsPerBuy(inputAsBN);
+    validateInput(inputAsBN);
+    setTicketsToBuy(inputAsInt ? limitedNumberTickets.toString() : "");
+    reset(parseInt(limitedNumberTickets?.toString(), 10), userTickets);
+  };
+
+  useEffect(() => {
+    const numberOfTicketsToBuy = new BigNumber(ticketsToBuy);
+    const costAfterDiscount = getTicketCostAfterDiscount(numberOfTicketsToBuy);
+    const costBeforeDiscount = priceTicketInHbar.times(numberOfTicketsToBuy);
+    const discountBeingApplied = costBeforeDiscount.minus(costAfterDiscount);
+    setTicketCostBeforeDiscount(
+      costBeforeDiscount.gt(0) ? costBeforeDiscount.toString() : "0"
+    );
+    setTotalCost(costAfterDiscount.gt(0) ? costAfterDiscount.toString() : "0");
+    setDiscountValue(
+      discountBeingApplied.gt(0) ? discountBeingApplied.toString() : "0"
+    );
+  }, [
+    ticketsToBuy,
+    priceTicketInHbar,
+    discountDivisor,
+    getTicketCostAfterDiscount,
+  ]);
+
+  const percentageDiscount = useMemo(() => {
+    if (!discountValue || !ticketCostBeforeDiscount) return 0;
+    const percentageAsBn = new BigNumber(discountValue)
+      .div(new BigNumber(ticketCostBeforeDiscount))
+      .times(100);
+    if (percentageAsBn.isNaN() || percentageAsBn.eq(0)) {
+      return 0;
+    }
+    return percentageAsBn.toNumber().toFixed(2);
+  }, [discountValue, ticketCostBeforeDiscount]);
+
+  const disableBuying = useMemo(
+    () =>
+      isPending ||
+      userNotEnoughHbar ||
+      !ticketsToBuy ||
+      new BigNumber(ticketsToBuy).lte(0) ||
+      getTicketsForPurchase().length !== parseInt(ticketsToBuy, 10),
+    [isPending, userNotEnoughHbar, ticketsToBuy, getTicketsForPurchase]
+  );
+
+  const errorMessage = useMemo(() => {
+    if (userNotEnoughHbar) return "Insufficient HBAR balance";
+    return `The maximum number of tickets you can buy in one transaction is ${maxNumberTicketsPerBuyOrClaim}`;
+  }, [userNotEnoughHbar, maxNumberTicketsPerBuyOrClaim]);
+
+  const buyTicketsHandler = async () => {
+    if (!currentLotteryId) return;
+    const ticketsForPurchase = getTicketsForPurchase();
+
+    if (!ticketsToBuy) {
+      toast.error("Please enter an amount", {
+        className: "toast-error",
+      });
+      return;
+    }
+
+    if (!account) {
+      toast.error("Please connect a wallet", {
+        className: "toast-error",
+      });
+      return;
+    }
+
+    const callOptions = { value: parseEther(totalCost) };
+
+    const args: any = [BigInt(currentLotteryId), ticketsForPurchase];
+    try {
+      const response = await writeContractAsync({
+        abi: LotteryABI,
+        address: CONTRACT_ADDRESS,
+        account,
+        functionName: "buyTickets",
+        args,
+        ...callOptions,
+      });
+
+      if (typeof response === "string") {
+        toast.success(`Purchase successful!`, {
+          className: "toast-success",
+        });
+
+        if (userTickets.length === 0) {
+          await addLotteryRound({ address: account, round: currentLotteryId });
+        }
+        setOpen(false);
+      }
+    } catch (error: any) {
+      toast.error(
+        error?.shortMessage || error?.message || "Failed to make a bet",
+        {
+          className: "toast-error",
+        }
+      );
+    }
+  };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={(value) => setOpen(value)}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[20.4375rem] w-full bg-white rounded-2xl py-8 px-4 text-mine-shaft">
+      <DialogContent className="sm:max-w-[20.4375rem] w-full bg-white rounded-2xl py-8 px-4 text-mine-shaft overflow-auto max-h-dvh">
         <DialogHeader>
           <DialogTitle className="sr-only">Buy Tickets</DialogTitle>
         </DialogHeader>
-        {isRandomizing ? (
-          <RandomizeTickets goBack={() => setRandomize(false)} />
+        {buyingStage === BuyingStage.EDIT ? (
+          <RandomizeTickets
+            totalCost={totalCost}
+            randomize={() => randomize(parseInt(ticketsToBuy, 10), userTickets)}
+            tickets={tickets}
+            allComplete={allComplete}
+            confirmHandler={buyTicketsHandler}
+            isConfirming={isPending}
+            goBack={() => setBuyingStage(BuyingStage.BUY)}
+          />
         ) : (
           <div>
-            <h3 className="text-base font-semibold text-center mb-1">
+            <h3 className="mb-1 text-base font-semibold text-center">
               Buy tickets
             </h3>
             <div className="space-y-[1.125rem]">
               <div className="space-y-1.5">
                 <h5 className="text-sm text-blue-gray-500">Buy</h5>
-                <div className="border border-gray-200 rounded-lg p-2 flex items-center justify-between">
+                <div className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
                   <TicketIcon />
                   <div>
                     <input
                       type="number"
-                      value={tickets}
+                      value={ticketsToBuy}
                       onChange={(event) => {
                         const value = event.target.value;
-                        setTickets(Number(value));
+                        handleInputChange(value);
                       }}
-                      className="p-0 border-0 text-right outline-none"
+                      className="p-0 text-right border-0 outline-none"
                       min={1}
                     />
-                    <span className="text-xs text-blue-gray-500">~ 0 HBAR</span>
+                    <span className="text-xs text-blue-gray-500">
+                      ~ {priceTicketInHbar.times(ticketsToBuy || 0).toString()}{" "}
+                      HBAR
+                    </span>
                   </div>
                 </div>
-                <span className="text-blue-gray-500 text-xs">
+                {userNotEnoughHbar || maxTicketPurchaseExceeded ? (
+                  <p className="text-xs text-error-500">{errorMessage}</p>
+                ) : null}
+                <span className="text-xs text-blue-gray-500">
                   Available HBAR:{" "}
-                  <span className="text-blue-gray-900">{balance}</span>
+                  <span className="text-blue-gray-900">
+                    {Number(balance)?.toFixed(2)}
+                  </span>
                 </span>
               </div>
-              <div className="bg-blue-gray-25 rounded-lg p-2 gap-1">
+              <div className="gap-1 p-2 rounded-lg bg-blue-gray-25">
                 <span className="flex items-center justify-between">
                   <span className="text-xs text-blue-gray-500">Cost:</span>
-                  <span className="text-xs text-blue-gray-900 text-right">
-                    200 HBAR
+                  <span className="text-xs text-right text-blue-gray-900">
+                    {priceTicketInHbar.times(ticketsToBuy || 0).toString()} HBAR
                   </span>
                 </span>
                 <span className="flex items-center justify-between">
                   <span className="text-xs text-blue-gray-500">
-                    Transaction fees:
+                    {percentageDiscount}% Bulk Discount:
                   </span>
-                  <span className="text-xs text-blue-gray-900 text-right">
-                    5 HBAR
+                  <span className="text-xs text-right text-blue-gray-900">
+                    {Number(discountValue)?.toFixed(2)} HBAR
                   </span>
                 </span>
                 <span className="flex items-center justify-between">
                   <span className="text-xs text-blue-gray-500">
                     Amount to pay:
                   </span>
-                  <span className="text-sm font-medium text-blue-gray-900 text-right">
-                    205 HBAR
+                  <span className="text-sm font-medium text-right text-blue-gray-900">
+                    {Number(totalCost)?.toFixed(2)} HBAR
                   </span>
                 </span>
               </div>
-              <span className="space-y-2 block">
-                <PrimaryButton
-                  disabled={ticketBuyIsDisabled}
-                  disabledText="Sale ended!"
-                  text="Buy now"
-                  className="py-2"
-                />
-                {!ticketBuyIsDisabled ? (
+              {isConnected ? (
+                <span className="block space-y-2">
                   <PrimaryButton
-                    text="Randomize your numbers"
-                    className="bg-white white py-2"
-                    onClick={() => setRandomize(true)}
+                    disabled={ticketBuyIsDisabled || disableBuying}
+                    text="Buy now"
+                    className="py-2"
+                    onClick={buyTicketsHandler}
+                    disabledText={isPending ? "Confirming..." : ""}
                   />
-                ) : null}
-              </span>
-              <span className="block rounded-lg p-2 bg-yellow-50 text-xs text-blue-gray-900">
+                  {!ticketBuyIsDisabled && ticketsToBuy ? (
+                    <PrimaryButton
+                      text="Randomize your numbers"
+                      className="py-2 bg-white white"
+                      onClick={() => setBuyingStage(BuyingStage.EDIT)}
+                      disabled={disableBuying}
+                    />
+                  ) : null}
+                </span>
+              ) : (
+                <ConnectWallet>
+                  <PrimaryButton as="span" text="Connect wallet" />
+                </ConnectWallet>
+              )}
+              <span className="block p-2 text-xs rounded-lg bg-yellow-50 text-blue-gray-900">
                 &quot;Buy now&quot; selects unique random numbers for your
                 tickets. Prices are fixed at $5 before each round, and purchases
                 are final.

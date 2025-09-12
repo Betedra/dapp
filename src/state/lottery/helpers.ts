@@ -71,7 +71,7 @@ export const processViewLotteryErrorResponse = (
     treasuryFee: "",
     firstTicketId: "",
     amountCollectedInWHbar: "",
-    finalNumber: 0,
+    finalNumber: "0",
     hbarPerBracket: [],
     countWinnersPerBracket: [],
     rewardsBreakdown: [],
@@ -93,4 +93,19 @@ export const processRawTicketsResponse = (
     });
   }
   return [];
+};
+
+export const parseRetrievedNumber = (number: string): string => {
+  const numberAsArray = number.split("");
+  numberAsArray.splice(0, 1);
+  numberAsArray.reverse();
+  return numberAsArray.join("");
+};
+
+export const getRoundIdArray = (
+  lotteryIds: number[],
+  currentLotteryId?: number
+) => {
+  if (!currentLotteryId) return [];
+  return lotteryIds.filter((lotteryId) => lotteryId !== currentLotteryId);
 };

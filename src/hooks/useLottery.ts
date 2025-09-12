@@ -1,29 +1,52 @@
 import LotteryABI from "@/smart-contract/abi/lottery";
-import { processViewLotterySuccessResponse } from "@/state/lottery/helpers";
-import { useReadContract } from "wagmi";
-import useGetCurrentLotteryId from "./useGetCurrentLotteryId";
+import { TICKET_LIMIT_PER_REQUEST } from "@/state/lottery/constants";
+import {
+  processRawTicketsResponse,
+  processViewLotterySuccessResponse,
+} from "@/state/lottery/helpers";
+import { useAccount, useReadContract } from "wagmi";
+import useGetLotteryData from "./useGetLotteryData";
+import { LotteryTicket } from "@/state/lottery/types";
 
-const address = process.env.NEXT_PUBLIC_LOTTERY_ADDRESS as `0x${string}`;
+const contract_address = process.env
+  .NEXT_PUBLIC_LOTTERY_ADDRESS as `0x${string}`;
 
 const useLottery = () => {
-  const { currentLotteryId, refetchCurrentLotteryId } =
-    useGetCurrentLotteryId();
+  const { address } = useAccount();
+  const { currentLotteryId, ...lotteryData } = useGetLotteryData();
   const { data, refetch } = useReadContract({
-    address,
+    address: contract_address,
     abi: LotteryABI,
     functionName: "viewLottery",
-    args: [currentLotteryId.toString()],
+    args: [currentLotteryId?.toString()],
     query: {
       enabled: !!currentLotteryId,
     },
   });
 
-  if (!data)
+  const { data: userLotteryRes } = useReadContract({
+    address: contract_address,
+    abi: LotteryABI,
+    functionName: "viewUserInfoForLotteryId",
+    args: [address, currentLotteryId?.toString(), 0, TICKET_LIMIT_PER_REQUEST],
+    query: {
+      enabled: !!currentLotteryId && !!address,
+    },
+  });
+
+  let userTickets: LotteryTicket[] = [];
+
+  if (userLotteryRes) {
+    userTickets = processRawTicketsResponse(userLotteryRes);
+  }
+
+  if (!currentLotteryId || !data)
     return {
       currentRound: null,
       currentLotteryId,
       refetch,
-      refetchCurrentLotteryId,
+      ...lotteryData,
+      userTickets,
     };
 
   return {
@@ -32,8 +55,9 @@ const useLottery = () => {
       data,
       currentLotteryId.toString()
     ),
-    refetchCurrentLotteryId,
+    ...lotteryData,
     refetch,
+    userTickets,
   };
 };
 

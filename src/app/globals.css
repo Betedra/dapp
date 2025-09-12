@@ -118,6 +118,14 @@ input[type="number"]::-webkit-outer-spin-button {
     justify-content: center;
     flex-direction: column;
   }
+
+  .toast-error {
+    @apply !bg-error-400 !text-neutral-50;
+  }
+
+  .toast-success {
+    @apply !bg-success-400 !text-neutral-50;
+  }
 }
 
 @theme inline {

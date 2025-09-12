@@ -16,7 +16,7 @@ const Numbers = ({ className, value }: Props) => {
         ?.split("")
         ?.reverse()
         .map((number, index) => {
-          if (index === value.length - 1) return;
+          if (index === 6) return;
           const randomNumber = Math.floor(Math.random() * 21) - 10;
           return (
             <span

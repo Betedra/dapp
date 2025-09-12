@@ -5,9 +5,11 @@ import UserIcon from "@/components/custom_icons/UserIcon";
 import PrimaryButton from "@/components/shared/Buttons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useGetCurrentLotteryId from "@/hooks/useGetCurrentLotteryId";
+import useGetUserLotteryData from "@/hooks/useGetUserLotteryData";
 import useHBarPrice from "@/hooks/useHBarPrice";
 import useLotteryHistory from "@/hooks/useLotteryHistory";
-import { LotteryResponse } from "@/state/lottery/types";
+import { LotteryResponse, UserRoundProps } from "@/state/lottery/types";
 import { cn, currencyFormatter, formatDate } from "@/utils";
 import { BIG_ZERO } from "@/utils/bigNumber";
 import BigNumber from "bignumber.js";
@@ -54,11 +56,11 @@ const RoundDetails = ({ round }: { round: LotteryResponse | null }) => {
             <CupIcon />
           </span>
           <div className="text-blue-gray-900">
-            <h4 className="text-sm font-semibold mb-1">Prize Pot</h4>
-            <h2 className="font-bold leading-5 text-xl lg:text-2xl">
+            <h4 className="mb-1 text-sm font-semibold">Prize Pot</h4>
+            <h2 className="text-xl font-bold leading-5 lg:text-2xl">
               {currencyFormatter(prizeTotal)}
             </h2>
-            <span className="text-blue-gray-600 text-xs font-medium">
+            <span className="text-xs font-medium text-blue-gray-600">
               ~{Number(round?.amountCollectedInWHbar).toLocaleString()} HBAR
             </span>
           </div>
@@ -68,8 +70,8 @@ const RoundDetails = ({ round }: { round: LotteryResponse | null }) => {
             <UserIcon />
           </span>
           <div className="text-blue-gray-900">
-            <h4 className="text-sm font-semibold mb-1">Total Players</h4>
-            <h2 className="font-bold leading-5 text-xl lg:text-2xl">
+            <h4 className="mb-1 text-sm font-semibold">Total Players</h4>
+            <h2 className="text-xl font-bold leading-5 lg:text-2xl">
               {totalPlayers}
             </h2>
           </div>
@@ -93,9 +95,9 @@ const RoundDetails = ({ round }: { round: LotteryResponse | null }) => {
             ))}
           </div>
           {/* <div className="w-full text-center lg:max-w-[10.4375rem] py-8 bg-error-100 rounded-2xl gap-2 flex flex-col justify-center items-center">
-            <h4 className="font-medium text-error-600 text-base">Burn</h4>
+            <h4 className="text-base font-medium text-error-600">Burn</h4>
             <span>
-              <h5 className="text-blue-gray-900 font-bold text-lg leading-4">
+              <h5 className="text-lg font-bold leading-4 text-blue-gray-900">
                 500 HBAR
               </h5>
               <span className="text-xs text-blue-gray-600">~$664</span>
@@ -107,7 +109,7 @@ const RoundDetails = ({ round }: { round: LotteryResponse | null }) => {
   );
 };
 
-const Round = () => {
+const Round = ({ userTickets, round }: UserRoundProps) => {
   const [showDetails, setShowDetails] = useState(false);
   const toggleVisibility = (event: MouseEvent<HTMLButtonElement>) => {
     const rounds_elements = document.querySelectorAll(".round");
@@ -124,13 +126,21 @@ const Round = () => {
     }
     setShowDetails(!showDetails);
   };
+  const drawnOn = useMemo(() => {
+    if (round) {
+      const endTimeMs = parseInt(round.endTime, 10) * 1000;
+      const endDate = new Date(endTimeMs);
+      return formatDate(endDate);
+    }
+    return "";
+  }, [round]);
   return (
     <div className="round group">
       <div className="flex items-center justify-between *:inline-block text-blue-gray-600 text-base font-medium">
-        <span className="text-blue-gray-500">#1256</span>
-        <span className="text-center">Aug 30, 2025. 1:00 PM</span>
+        <span className="text-blue-gray-500">#{round.lotteryId}</span>
+        <span className="text-center">{drawnOn}</span>
         <div className="flex items-center space-x-[2.625rem]">
-          <span className="text-right">1</span>
+          <span className="text-right">{userTickets.length}</span>
           <button className="text-blue-500" onClick={toggleVisibility}>
             <span className="group-data-[state=open]:hidden">Show</span>
             <span className="hidden group-data-[state=open]:inline-block">
@@ -144,16 +154,26 @@ const Round = () => {
           "h-0 overflow-hidden transition-all duration-75 opacity-0 group-data-[state=open]:opacity-100 group-data-[state=open]:mt-6 group-data-[state=open]:h-auto"
         )}
       >
-        <div className="bg-blue-500 px-8 py-7 flex flex-col md:flex-row space-y-4 md:space-y-0 items-center justify-between rounded-2xl">
+        <div className="flex flex-col items-center justify-between px-8 space-y-4 bg-blue-500 py-7 md:flex-row md:space-y-0 rounded-2xl">
           <span className="text-base font-medium text-blue-gray-600">
             Winning numbers
           </span>
-          <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center text-white">
-            <Numbers className="gap-2 *:size-[3.5rem] *:text-[1.39875rem]" />
-            <ViewUserTickets />
+          <div className="flex flex-col items-center gap-4 text-white md:flex-row md:gap-6">
+            <Numbers
+              value={round?.finalNumber || ""}
+              className="gap-2 *:size-[3.5rem] *:text-[1.39875rem]"
+            />
+            {/* <ViewUserTickets isPastRoundView /> */}
+            {userTickets.length > 0 ? (
+              <ViewUserTickets
+                isPastRoundView
+                lotteryId={round.lotteryId?.toString() || ""}
+                tickets={userTickets}
+              />
+            ) : null}
           </div>
         </div>
-        {/* <RoundDetails /> */}
+        <RoundDetails round={round} />
       </div>
     </div>
   );
@@ -179,14 +199,14 @@ const MatchCard = ({
   }, [wHbarPrice, amount]);
   return (
     <div>
-      <h5 className="text-base font-medium text-transparent mb-1 bg-clip-text bg-gradient-to-b from-blue-500 via-dodger-blue to-purple-500">
+      <h5 className="mb-1 text-base font-medium text-transparent bg-clip-text bg-gradient-to-b from-blue-500 via-dodger-blue to-purple-500">
         Match {rewardBracket < 6 ? "first" : "all"} {rewardBracket}
       </h5>
       <span>
-        <h5 className="text-blue-gray-900 font-bold text-lg leading-4">
+        <h5 className="text-lg font-bold leading-4 text-blue-gray-900">
           {amount} HBAR
         </h5>
-        <span className="text-xs text-blue-gray-600 block mb-1">
+        <span className="block mb-1 text-xs text-blue-gray-600">
           ~{currencyFormatter(amountInUsd)}
         </span>
         <span className="flex items-center text-blue-gray-600 text-[0.625rem] space-x-0.5">
@@ -251,7 +271,7 @@ const AllHistory = () => {
       <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 items-center justify-between pb-5 pt-2.5 px-8">
         <span className="flex items-center space-x-1 text-base text-blue-gray-500">
           <span>Round</span>
-          <span className="border block p-2 rounded-xl border-blue-gray-300">
+          <span className="block p-2 border rounded-xl border-blue-gray-300">
             #{latestId}
           </span>
         </span>
@@ -282,7 +302,7 @@ const AllHistory = () => {
           Drawn on - {drawnOn}
         </span>
       </div>
-      <div className="bg-blue-500 px-8 py-7 flex flex-col md:flex-row space-y-4 md:space-y-0 items-center justify-between">
+      <div className="flex flex-col items-center justify-between px-8 space-y-4 bg-blue-500 py-7 md:flex-row md:space-y-0">
         <span className="text-base font-medium text-blue-gray-600">
           Winning numbers
         </span>
@@ -297,9 +317,14 @@ const AllHistory = () => {
 };
 
 const UserHistory = () => {
-  const isEmpty = false;
+  const { currentLotteryId, isLoading: isGettingCurrentLotteryId } =
+    useGetCurrentLotteryId();
+  const { isLoading, lotteries } = useGetUserLotteryData(currentLotteryId);
 
-  if (isEmpty) {
+  if (isLoading || isGettingCurrentLotteryId)
+    return <Skeleton className="rounded-2xl min-h-[24.6875rem]" />;
+
+  if (!isLoading && lotteries.length === 0) {
     return (
       <div className="border border-blue-gray-200 text-base text-center text-blue-gray-600 rounded-2xl min-h-[24.6875rem] flex items-center justify-center flex-col">
         <p className="mb-1.5">No lottery history found</p>
@@ -321,8 +346,13 @@ const UserHistory = () => {
       </div>
       {/* ROUNDS */}
       <div className="space-y-6">
-        <Round />
-        <Round />
+        {lotteries?.map((lottery) => (
+          <Round
+            key={lottery.round.lotteryId}
+            userTickets={lottery.userTickets}
+            round={lottery.round}
+          />
+        ))}
       </div>
     </div>
   );

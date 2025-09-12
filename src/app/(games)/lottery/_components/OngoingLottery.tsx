@@ -107,8 +107,13 @@ const Countdown = ({
 };
 
 const OngoingLottery = () => {
-  const { currentRound, currentLotteryId, refetch, refetchCurrentLotteryId } =
-    useLottery();
+  const {
+    currentRound,
+    currentLotteryId,
+    refetch,
+    refetchLotteryData,
+    userTickets,
+  } = useLottery();
   const { isTransitioning } = useLotteryTransitionStore();
   const wHbarPrice = useHBarPrice();
   const prizeTotal = Number(currentRound?.amountCollectedInWHbar) * wHbarPrice;
@@ -117,10 +122,10 @@ const OngoingLottery = () => {
 
   useEffect(() => {
     if (isTransitioning) {
-      refetchCurrentLotteryId();
+      refetchLotteryData();
       refetch();
     }
-  }, [isTransitioning, refetch, refetchCurrentLotteryId]);
+  }, [isTransitioning, refetch, refetchLotteryData]);
 
   const endTimeAsInt = currentRound?.endTime
     ? parseInt(currentRound?.endTime, 10)
@@ -224,17 +229,19 @@ const OngoingLottery = () => {
             <span className="font-medium text-base text-blue-gray-600">
               You have{" "}
               <span className="text-blue-gray-900 font-bold inline-block">
-                0
+                {userTickets?.length}
               </span>{" "}
               tickets in this round
             </span>
             <span className="flex items-center space-x-[1.125rem] text-blue-600">
-              <ViewUserTickets />
+              {userTickets.length > 0 ? (
+                <ViewUserTickets lotteryId={currentLotteryId?.toString() || ""} tickets={userTickets} />
+              ) : null}
               <BuyTickets
                 trigger={
                   <PrimaryButton
                     text="Buy tickets"
-                    className="max-w-[7.1875rem] whitespace-nowrap"
+                    className="w-fit whitespace-nowrap"
                     disabled={ticketBuyIsDisabled || !currentRound}
                     disabledText="On sale soon!"
                   />
