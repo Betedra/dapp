@@ -17,7 +17,7 @@ export async function addLotteryRound({ address, round }: AddLotteryParams) {
     // upsert ensures a new record is created if it doesn’t exist
     await Lottery.findOneAndUpdate(
       { address: address.toLowerCase() },
-      { $addToSet: { lotteries: round } }, // prevents duplicates
+      { $addToSet: { lotteries: Number(round) } }, // prevents duplicates
       { upsert: true, new: true }
     );
 
