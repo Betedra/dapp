@@ -17,8 +17,9 @@ import { CONTRACT_ADDRESS } from "@/state/lottery/constants";
 import { LotteryStatus } from "@/state/lottery/types";
 import useLotteryTransitionStore from "@/store/useLotteryTransitionStore";
 import { TicketProps, useTicketsStore } from "@/store/useTicketStore";
+import { getFullDisplayBalance } from "@/utils/formatBalance";
 import BigNumber from "bignumber.js";
-import { parseEther, ZeroAddress } from "ethers";
+import { parseUnits, ZeroAddress } from "ethers";
 import React, {
   ReactNode,
   useCallback,
@@ -194,11 +195,19 @@ const BuyTickets = ({ trigger }: Props) => {
     const costBeforeDiscount = priceTicketInHbar.times(numberOfTicketsToBuy);
     const discountBeingApplied = costBeforeDiscount.minus(costAfterDiscount);
     setTicketCostBeforeDiscount(
-      costBeforeDiscount.gt(0) ? costBeforeDiscount.toString() : "0"
+      costBeforeDiscount.gt(0)
+        ? getFullDisplayBalance(costBeforeDiscount, 0)
+        : "0"
     );
-    setTotalCost(costAfterDiscount.gt(0) ? costAfterDiscount.toString() : "0");
+    setTotalCost(
+      costAfterDiscount.gt(0)
+        ? getFullDisplayBalance(costAfterDiscount, 0, 2)
+        : "0"
+    );
     setDiscountValue(
-      discountBeingApplied.gt(0) ? discountBeingApplied.toString() : "0"
+      discountBeingApplied.gt(0)
+        ? getFullDisplayBalance(discountBeingApplied, 0, 5)
+        : "0"
     );
   }, [
     ticketsToBuy,
@@ -251,9 +260,14 @@ const BuyTickets = ({ trigger }: Props) => {
       return;
     }
 
-    const callOptions = { value: parseEther(totalCost) };
+    const callOptions = {
+      value: parseUnits(
+        priceTicketInHbar.times(ticketsToBuy || 0).toString(),
+        18
+      ),
+    };
 
-    const args: any = [BigInt(currentLotteryId), ticketsForPurchase];
+    const args: any = [currentLotteryId, ticketsForPurchase];
     try {
       const response = await writeContractAsync({
         abi: LotteryABI,
