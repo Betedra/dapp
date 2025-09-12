@@ -31,11 +31,11 @@ const MatchCard = ({ rewardBracket, amount }: MatchCardProps) => {
   }, [wHbarPrice, amount]);
   return (
     <div className="w-fit">
-      <h5 className="text-base font-medium text-transparent mb-1 bg-clip-text bg-gradient-to-b from-blue-500 via-dodger-blue to-purple-500">
+      <h5 className="mb-1 text-base font-medium text-transparent bg-clip-text bg-gradient-to-b from-blue-500 via-dodger-blue to-purple-500">
         Match {rewardBracket < 6 ? "first" : "all"} {rewardBracket}
       </h5>
       <span>
-        <h5 className="text-blue-gray-900 font-bold text-lg leading-4">
+        <h5 className="text-lg font-bold leading-4 text-blue-gray-900">
           {amount} HBAR
         </h5>
         <span className="text-xs text-blue-gray-600">
@@ -90,15 +90,15 @@ const Countdown = ({
   return (
     <div className="text-blue-gray-900">
       <h4 className="text-base font-semibold">{preCountdownText}</h4>
-      <h2 className="font-bold text-2xl md:text-3xl lg:text-4xl">
+      <h2 className="text-2xl font-bold md:text-3xl lg:text-4xl">
         {hours}
         <span className="lg:text-lg">h</span> {minutes}
         <span className="lg:text-lg">m</span>
       </h2>
-      <span className="text-blue-gray-600 text-sm block mb-1 font-medium">
+      <span className="block mb-1 text-sm font-medium text-blue-gray-600">
         {Boolean(endTime) && getNextDrawDateTime(status, endDate)}
       </span>
-      <span className="text-blue-gray-500 text-xs block font-medium">
+      <span className="block text-xs font-medium text-blue-gray-500">
         Round{" "}
         {currentLotteryId && `#${getNextDrawId(status, currentLotteryId)}`}
       </span>
@@ -119,6 +119,8 @@ const OngoingLottery = () => {
   const prizeTotal = Number(currentRound?.amountCollectedInWHbar) * wHbarPrice;
   const ticketBuyIsDisabled =
     currentRound?.status !== LotteryStatus.OPEN || isTransitioning;
+
+  // console.log(currentRound);
 
   useEffect(() => {
     if (isTransitioning) {
@@ -152,9 +154,9 @@ const OngoingLottery = () => {
           src="/svgs/radial-sun-burst.svg"
           alt="Radial Sun burst"
           fill
-          className="object-top object-cover absolute -z-10 top-0 left-0 w-full h-full"
+          className="absolute top-0 left-0 object-cover object-top w-full h-full -z-10"
         />
-        <div className="text-center text-blue-gray-25 relative">
+        <div className="relative text-center text-blue-gray-25">
           <Image
             src="/images/glowing-star.gif"
             alt="Glowing star"
@@ -208,11 +210,11 @@ const OngoingLottery = () => {
           )}
           {prizeTotal ? (
             <div className="text-blue-gray-900">
-              <h4 className="text-base font-semibold mb-1">Prize Pot</h4>
+              <h4 className="mb-1 text-base font-semibold">Prize Pot</h4>
               <h2 className="font-bold text-2xl lg:text-[2rem]">
                 {currencyFormatter(prizeTotal)}
               </h2>
-              <span className="text-blue-gray-600 text-base font-medium">
+              <span className="text-base font-medium text-blue-gray-600">
                 ~{Number(currentRound?.amountCollectedInWHbar).toLocaleString()}{" "}
                 HBAR
               </span>
@@ -221,21 +223,24 @@ const OngoingLottery = () => {
             <Skeleton className="w-32 h-16" />
           )}
         </div>
-        <div className="w-full border border-blue-gray-200 rounded-2xl overflow-hidden">
+        <div className="w-full overflow-hidden border border-blue-gray-200 rounded-2xl">
           <div className="bg-blue-gray-100 p-4 md:px-8 md:py-2.5 flex space-y-3 md:space-y-0 md:items-center flex-col md:flex-row justify-between">
-            <span className="font-medium text-base text-blue-gray-600">
+            <span className="text-base font-medium text-blue-gray-600">
               Your tickets
             </span>
-            <span className="font-medium text-base text-blue-gray-600">
+            <span className="text-base font-medium text-blue-gray-600">
               You have{" "}
-              <span className="text-blue-gray-900 font-bold inline-block">
+              <span className="inline-block font-bold text-blue-gray-900">
                 {userTickets?.length}
               </span>{" "}
               tickets in this round
             </span>
             <span className="flex items-center space-x-[1.125rem] text-blue-600">
               {userTickets.length > 0 ? (
-                <ViewUserTickets lotteryId={currentLotteryId?.toString() || ""} tickets={userTickets} />
+                <ViewUserTickets
+                  lotteryId={currentLotteryId?.toString() || ""}
+                  tickets={userTickets}
+                />
               ) : null}
               <BuyTickets
                 trigger={
@@ -266,9 +271,9 @@ const OngoingLottery = () => {
                   ))}
                 </div>
                 {/* <div className="w-full text-center lg:max-w-[10.4375rem] py-8 bg-error-100 rounded-2xl gap-2 flex flex-col justify-center items-center">
-                <h4 className="font-medium text-error-600 text-base">Burn</h4>
+                <h4 className="text-base font-medium text-error-600">Burn</h4>
                 <span>
-                  <h5 className="text-blue-gray-900 font-bold text-lg leading-4">
+                  <h5 className="text-lg font-bold leading-4 text-blue-gray-900">
                     500 HBAR
                   </h5>
                   <span className="text-xs text-blue-gray-600">~$664</span>
