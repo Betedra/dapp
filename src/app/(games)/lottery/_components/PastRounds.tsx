@@ -4,6 +4,7 @@ import UserIcon from "@/components/custom_icons/UserIcon";
 import PrimaryButton from "@/components/shared/Buttons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useGetTotalPlayers from "@/hooks/useGetTotalPlayers";
 import useGetUserLotteryData from "@/hooks/useGetUserLotteryData";
 import useHBarPrice from "@/hooks/useHBarPrice";
 import useLotteryHistory from "@/hooks/useLotteryHistory";
@@ -20,14 +21,9 @@ const RoundDetails = ({ round }: { round: LotteryResponse | null }) => {
   const wHbarPrice = useHBarPrice();
   const prizeTotal = Number(round?.amountCollectedInWHbar) * wHbarPrice;
 
-  // const totalPlayers = useMemo(() => {
-  //   if (round) {
-  //     return round.countWinnersPerBracket.reduce((total, count) => {
-  //       return total + Number(count);
-  //     }, 0);
-  //   }
-  //   return 0;
-  // }, [round]);
+  const { isLoading, data } = useGetTotalPlayers(
+    round?.lotteryId ? Number(round?.lotteryId) : undefined
+  );
 
   if (!round) return null;
 
@@ -48,13 +44,20 @@ const RoundDetails = ({ round }: { round: LotteryResponse | null }) => {
             </span>
           </div>
         </div>
+
         <div className="flex items-start space-x-1">
           <span className="flex items-center justify-center rounded-full bg-blue-gray-100 size-11">
             <UserIcon />
           </span>
           <div className="text-blue-gray-900">
             <h4 className="mb-1 text-sm font-semibold">Total Players</h4>
-            <h2 className="text-xl font-bold leading-5 lg:text-2xl">0</h2>
+            {isLoading ? (
+              <Skeleton className="size-3" />
+            ) : (
+              <h2 className="text-xl font-bold leading-5 lg:text-2xl">
+                {data?.totalPlayers || 0}
+              </h2>
+            )}
           </div>
         </div>
       </div>

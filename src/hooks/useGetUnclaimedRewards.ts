@@ -36,7 +36,11 @@ const useGetUnclaimedRewards = () => {
     setFetchStatus(FetchStatus.Fetched);
   };
 
-  return { currentLotteryId, fetchAllRewards, unclaimedRewards, fetchStatus };
+  const reset = () => {
+    setUnclaimedRewards([])
+  }
+
+  return { currentLotteryId, reset, fetchAllRewards, unclaimedRewards, fetchStatus };
 };
 
 export default useGetUnclaimedRewards;
