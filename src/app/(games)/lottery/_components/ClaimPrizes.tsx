@@ -75,8 +75,8 @@ const ClaimWinnings = ({
       // If there are still rounds to claim, move onto the next claim
       setActiveClaimIndex(activeClaimIndex + 1);
     } else {
-      setOpen(false);
       onSuccess?.();
+      setOpen(false);
     }
   };
 

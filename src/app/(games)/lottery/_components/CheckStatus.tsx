@@ -14,8 +14,13 @@ const CheckStatus = () => {
   const { isConnected, address: account } = useAccount();
   const [hasCheckedForRewards, setHasCheckedForRewards] = useState(false);
   const [hasRewardsToClaim, setHasRewardsToClaim] = useState(false);
-  const { fetchAllRewards, unclaimedRewards, fetchStatus, currentLotteryId } =
-    useGetUnclaimedRewards();
+  const {
+    fetchAllRewards,
+    reset,
+    unclaimedRewards,
+    fetchStatus,
+    currentLotteryId,
+  } = useGetUnclaimedRewards();
   const isFetchingRewards = fetchStatus === FetchStatus.Fetching;
 
   useEffect(() => {
@@ -101,6 +106,7 @@ const CheckStatus = () => {
             <ClaimPrizes
               roundsToClaim={unclaimedRewards}
               onSuccess={() => {
+                reset();
                 setHasCheckedForRewards(false);
                 setHasRewardsToClaim(false);
               }}

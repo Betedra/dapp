@@ -11,12 +11,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import useGetBalance from "@/hooks/useGetBalanceAndDecimal";
+import useHBarPrice from "@/hooks/useHBarPrice";
 import useLottery from "@/hooks/useLottery";
 import LotteryABI from "@/smart-contract/abi/lottery";
 import { CONTRACT_ADDRESS } from "@/state/lottery/constants";
 import { LotteryStatus } from "@/state/lottery/types";
 import useLotteryTransitionStore from "@/store/useLotteryTransitionStore";
 import { TicketProps, useTicketsStore } from "@/store/useTicketStore";
+import { currencyFormatter } from "@/utils";
 import { getFullDisplayBalance } from "@/utils/formatBalance";
 import BigNumber from "bignumber.js";
 import { parseUnits, ZeroAddress } from "ethers";
@@ -109,8 +111,10 @@ const BuyTickets = ({ trigger }: Props) => {
     maxNumberTicketsPerBuyOrClaim,
     currentLotteryId,
     userTickets,
+    refetch,
   } = useLottery();
   const { isTransitioning } = useLotteryTransitionStore();
+  const hbarPrice = useHBarPrice();
   const ticketBuyIsDisabled =
     currentRound?.status !== LotteryStatus.OPEN || isTransitioning;
   const [ticketsToBuy, setTicketsToBuy] = useState("");
@@ -287,6 +291,7 @@ const BuyTickets = ({ trigger }: Props) => {
           await addLotteryRound({ address: account, round: currentLotteryId });
         }
         setOpen(false);
+        refetch();
       }
     } catch (error: any) {
       toast.error(
@@ -360,9 +365,31 @@ const BuyTickets = ({ trigger }: Props) => {
               </div>
               <div className="gap-1 p-2 rounded-lg bg-blue-gray-25">
                 <span className="flex items-center justify-between">
+                  <span className="text-xs text-blue-gray-500">
+                    Ticket per HBAR:
+                  </span>
+                  <span className="text-xs text-right text-blue-gray-900">
+                    {priceTicketInHbar.toString()} HBAR (
+                    {currencyFormatter(
+                      priceTicketInHbar.times(hbarPrice).toString(),
+                      2
+                    )}
+                    )
+                  </span>
+                </span>
+                <span className="flex items-center justify-between">
                   <span className="text-xs text-blue-gray-500">Cost:</span>
                   <span className="text-xs text-right text-blue-gray-900">
                     {priceTicketInHbar.times(ticketsToBuy || 0).toString()} HBAR
+                    (
+                    {currencyFormatter(
+                      priceTicketInHbar
+                        .times(ticketsToBuy || 0)
+                        .times(hbarPrice)
+                        .toString(),
+                      2
+                    )}
+                    )
                   </span>
                 </span>
                 <span className="flex items-center justify-between">
@@ -370,7 +397,8 @@ const BuyTickets = ({ trigger }: Props) => {
                     {percentageDiscount}% Bulk Discount:
                   </span>
                   <span className="text-xs text-right text-blue-gray-900">
-                    {Number(discountValue)?.toFixed(2)} HBAR
+                    {Number(discountValue)?.toFixed(2)} HBAR (
+                    {currencyFormatter(Number(discountValue) * hbarPrice, 2)})
                   </span>
                 </span>
                 <span className="flex items-center justify-between">
@@ -378,7 +406,8 @@ const BuyTickets = ({ trigger }: Props) => {
                     Amount to pay:
                   </span>
                   <span className="text-sm font-medium text-right text-blue-gray-900">
-                    {Number(totalCost)?.toFixed(2)} HBAR
+                    {Number(totalCost)?.toFixed(2)} HBAR (
+                    {currencyFormatter(Number(totalCost) * hbarPrice, 2)})
                   </span>
                 </span>
               </div>
@@ -407,8 +436,8 @@ const BuyTickets = ({ trigger }: Props) => {
               )}
               <span className="block p-2 text-xs rounded-lg bg-yellow-50 text-blue-gray-900">
                 &quot;Buy now&quot; selects unique random numbers for your
-                tickets. Prices are fixed at $5 before each round, and purchases
-                are final.
+                tickets. Prices are fixed at {priceTicketInHbar.toString()} HBAR{" "}
+                before each round, and purchases are final.
               </span>
             </div>
           </div>
