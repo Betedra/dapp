@@ -49,7 +49,7 @@ const Countdown = ({
   endTime,
 }: CountdownProps) => {
   const secondsRemaining = useNextEventCountdown(nextEventTime);
-  const { hours, minutes } = getTimePeriods(
+  const { days, hours, minutes } = getTimePeriods(
     secondsRemaining && secondsRemaining > 0 ? secondsRemaining : 0
   );
 
@@ -60,6 +60,12 @@ const Countdown = ({
     <div className="text-blue-gray-900">
       <h4 className="text-base font-semibold">{preCountdownText}</h4>
       <h2 className="text-2xl font-bold md:text-3xl lg:text-4xl">
+        {days ? (
+          <>
+            {days}
+            <span className="lg:text-lg">d</span>{" "}
+          </>
+        ) : null}
         {hours}
         <span className="lg:text-lg">h</span> {minutes}
         <span className="lg:text-lg">m</span>
