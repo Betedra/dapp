@@ -101,7 +101,10 @@ export const getWinningTickets = async (
     return !ticket.status;
   });
 
-  if (unclaimedWinningTickets.length > 0) {
+  if (
+    Array.isArray(unclaimedWinningTickets) &&
+    unclaimedWinningTickets.length > 0
+  ) {
     const { ticketsWithUnclaimedRewards, hbarTotal } =
       await fetchHbarRewardsForTickets(unclaimedWinningTickets);
     return {
@@ -142,8 +145,8 @@ const fetchUnclaimedUserRewards = async (
   );
 
   // Flatten & filter out null values
-  return winningRounds.flat().filter(
-    (ticket): ticket is LotteryTicketClaimData => ticket !== null
-  );
+  return winningRounds
+    .flat()
+    .filter((ticket): ticket is LotteryTicketClaimData => ticket !== null);
 };
 export default fetchUnclaimedUserRewards;
