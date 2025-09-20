@@ -9,7 +9,7 @@ import usePollOraclePrice from "@/hooks/usePollOraclePrice";
 import { currencyFormatter } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
-import React, { Key, useEffect, useRef, useState } from "react";
+import React, { Key, useEffect, useMemo, useRef, useState } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -52,14 +52,24 @@ const Predictions = () => {
     return () => clearTimeout(timeout); // Cleanup on unmount
   }, [currentEpoch, rounds, refetch]);
 
-  const previousEpoch = currentEpoch > 0 ? currentEpoch - 1 : currentEpoch;
-  const swiperIndex = rounds?.findIndex(
-    (round) => round.epoch === previousEpoch
+  const previousEpoch = useMemo(
+    () => (currentEpoch > 0 ? currentEpoch - 1 : currentEpoch),
+    [currentEpoch]
+  );
+  const swiperIndex = useMemo(
+    () => rounds?.findIndex((round) => round.epoch === previousEpoch),
+    [rounds, previousEpoch]
   );
 
-  const { secondsRemaining, timeLeft } = useCountdown(
-    rounds?.[swiperIndex]?.closeTimestamp
-  );
+  const timeStamp = useMemo(() => {
+    const previousRoundTimestamp = rounds?.[swiperIndex]?.closeTimestamp;
+    const currentRoundTimestamp = rounds?.[swiperIndex + 1]?.closeTimestamp;
+    return previousRoundTimestamp
+      ? previousRoundTimestamp
+      : currentRoundTimestamp;
+  }, [rounds, swiperIndex]);
+
+  const { secondsRemaining, timeLeft } = useCountdown(timeStamp);
 
   const swiperRef = useRef<any>(null);
   const [activeIndex, setActiveIndex] = useState(0);
