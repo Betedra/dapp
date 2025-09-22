@@ -13,22 +13,24 @@ const Footer = () => {
         width={113}
         height={46.11}
       />
-      <Link
-        target="_blank"
-        href="https://x.com/betedra_fun"
-        className="hover:underline transition-all flex items-center space-x-2 duration-75 text-blue-gray-100"
-      >
-        <FaXTwitter size={16} />
-        <span>Follow on Twitter (X)</span>
-      </Link>
-      <Link
-        target="_blank"
-        href="https://betedra.gitbook.io/docs/"
-        className="hover:underline transition-all flex items-center space-x-2 duration-75 text-blue-gray-100"
-      >
-        <IoDocumentTextOutline size={16} />
-        <span>Docs</span>
-      </Link>
+      <span className="flex gap-3 items-center flex-wrap">
+        <Link
+          target="_blank"
+          href="https://x.com/betedra_fun"
+          className="hover:underline transition-all flex items-center space-x-2 duration-75 text-blue-gray-100"
+        >
+          <FaXTwitter size={16} />
+          <span>Follow on Twitter (X)</span>
+        </Link>
+        <Link
+          target="_blank"
+          href="https://betedra.gitbook.io/docs/"
+          className="hover:underline transition-all flex items-center space-x-2 duration-75 text-blue-gray-100"
+        >
+          <IoDocumentTextOutline size={16} />
+          <span>Docs</span>
+        </Link>
+      </span>
       <Link
         href="https://hedera.com/"
         target="_blank"
