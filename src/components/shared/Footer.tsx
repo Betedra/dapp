@@ -6,14 +6,14 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 
 const Footer = () => {
   return (
-    <footer className="bg-blue-gray-900 py-6 px-8 lg:px-[4.9375rem] flex flex-wrap items-center justify-between">
+    <footer className="bg-blue-gray-900 py-6 px-8 lg:px-[4.9375rem] flex flex-col md:flex-row space-y-4 md:space-y-0 items-center justify-between">
       <Image
         src="/svgs/logo-white.svg"
         alt="Betedra Logo"
         width={113}
         height={46.11}
       />
-      <span className="flex gap-3 items-center flex-wrap">
+      <span className="flex gap-6 items-center flex-wrap">
         <Link
           target="_blank"
           href="https://x.com/betedra_fun"
