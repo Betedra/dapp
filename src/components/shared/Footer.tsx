@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { FaXTwitter } from "react-icons/fa6";
+import { IoDocumentTextOutline } from "react-icons/io5";
 
 const Footer = () => {
   return (
@@ -19,6 +20,14 @@ const Footer = () => {
       >
         <FaXTwitter size={16} />
         <span>Follow on Twitter (X)</span>
+      </Link>
+      <Link
+        target="_blank"
+        href="https://betedra.gitbook.io/docs/"
+        className="hover:underline transition-all flex items-center space-x-2 duration-75 text-blue-gray-100"
+      >
+        <IoDocumentTextOutline size={16} />
+        <span>Docs</span>
       </Link>
       <Link
         href="https://hedera.com/"
