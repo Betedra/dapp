@@ -122,7 +122,7 @@ const CancelledRoundCard = ({ round, betPosition }: CanceledRoundCardProps) => {
                 />
               ) : null}
               <Link
-                href="https://vedex.gitbook.io/docs/betedra/how-prediction-works"
+                href="https://betedra.gitbook.io/docs/play/prediction/how-to-use-prediction"
                 target="_blank"
                 className="underline text-sm text-blue-500"
               >
