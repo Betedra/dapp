@@ -10,7 +10,8 @@ import useLotteryTransitionStore from "@/store/useLotteryTransitionStore";
 import { currencyFormatter, formatDate } from "@/utils";
 import getTimePeriods from "@/utils/getTimePeriods";
 import Image from "next/image";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
+import CountUp from "react-countup";
 import BuyTickets from "./BuyTickets";
 import RewardBrackets from "./RewardBrackets";
 import ViewUserTickets from "./ViewUserTickets";
@@ -92,8 +93,10 @@ const OngoingLottery = () => {
   const { isTransitioning } = useLotteryTransitionStore();
   const wHbarPrice = useHBarPrice();
   const prizeTotal = Number(currentRound?.amountCollectedInWHbar) * wHbarPrice;
-  const ticketBuyIsDisabled =
-    currentRound?.status !== LotteryStatus.OPEN || isTransitioning;
+  const ticketBuyIsDisabled = useMemo(
+    () => currentRound?.status !== LotteryStatus.OPEN || isTransitioning,
+    [currentRound, isTransitioning]
+  );
 
   useEffect(() => {
     if (isTransitioning) {
@@ -135,20 +138,31 @@ const OngoingLottery = () => {
           <span className="block text-base font-semibold mb-[0.3125rem]">
             The Betedra Lottery {currentRound ? "of" : null}
           </span>
-          {currentRound ? (
-            <>
-              <h2 className="font-bold text-2xl md:text-3xl lg:text-5xl mb-[0.3125rem]">
-                {currencyFormatter(prizeTotal)}
-              </h2>
-              <span className="block text-base font-semibold">in prizes</span>
-            </>
-          ) : null}
+
+          <CountUp
+            start={0}
+            preserveValue
+            delay={0}
+            end={prizeTotal}
+            prefix="$"
+            decimals={4}
+            duration={1}
+          >
+            {({ countUpRef }) => (
+              <span className="font-bold block text-2xl md:text-3xl lg:text-5xl mb-[0.3125rem]">
+                <span ref={countUpRef} />
+              </span>
+            )}
+          </CountUp>
+
+          <span className="block text-base font-semibold">in prizes</span>
+
           <BuyTickets
             trigger={
               <PrimaryButton
                 text="Buy tickets"
                 className="max-w-[10.4375rem] mx-auto mt-8"
-                disabled={ticketBuyIsDisabled || !currentRound}
+                disabled={!currentRound || ticketBuyIsDisabled}
                 disabledText="On sale soon!"
               />
             }
