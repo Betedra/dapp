@@ -145,7 +145,7 @@ const OngoingLottery = () => {
             delay={0}
             end={prizeTotal}
             prefix="$"
-            decimals={4}
+            decimals={2}
             duration={1}
           >
             {({ countUpRef }) => (
@@ -158,6 +158,7 @@ const OngoingLottery = () => {
           <span className="block text-base font-semibold">in prizes</span>
 
           <BuyTickets
+            btnClassName="mt-8"
             trigger={
               <PrimaryButton
                 text="Buy tickets"
